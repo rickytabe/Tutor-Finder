@@ -12,6 +12,7 @@ export interface User {
 }
 
 export interface Learner extends User {
+  displayName: string;
   subjectsOfInterest: string[];
   preferredLearningStyle: string; 
   availability: string[]; // e.g., ['Weekdays', 'Weekends']

@@ -31,10 +31,10 @@ const ProfileNexus: React.FC = () => {
           setProfile({
             fullName: 'displayName' in (userProfile as Learner | Tutor) ? (userProfile as Learner).displayName : '',
             email: userProfile.email || '',
-            language: 'language' in userProfile ? userProfile.language : 'English',
+            language: 'language' in userProfile ? (userProfile.language as string) : 'English',
             notification: 'notification' in userProfile ? Boolean(userProfile.notification) : true,
-            timezone: 'timezone' in userProfile ? userProfile.timezone : 'UTC+0',
-            profilePic: 'profilePic' in userProfile ? userProfile.profilePic : 'https://i.pravatar.cc/150?img=57',
+            timezone: 'UTC+0',
+            profilePic: 'https://i.pravatar.cc/150?img=57',
             preferredLearningStyle: 'preferredLearningStyle' in userProfile ? userProfile.preferredLearningStyle : 'Visual',
             location: 'location' in userProfile && userProfile.location ? userProfile.location : 'Not specified',
           });
