@@ -17,36 +17,39 @@ import FinancialHub from "./components/Main/learner-pages/Learner_Dashboard/Fina
 import ProfileNexus from "./components/Main/learner-pages/Learner_Dashboard/ProfileNexus";
 import Dashboard from "./components/Main/learner-pages/Learner_Dashboard/Dashboard";
 import Community from "./components/Main/learner-pages/Community/community";
+import { Analytics } from "@vercel/analytics/react"
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <ToastContainer />
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route
-            path="/auth/learner-registration"
-            element={<LearnerRegister />}
-          />
-          <Route path="/auth/tutor-registration" element={<TutorRegister />} />
-          <Route path="/auth/learner-login" element={<LearnerLogin />} />
-          <Route path="/auth/tutor-login" element={<TutorLogin />} />
-          <Route path="/learner-homePage" element={<LearnerHomePage />} />
-          <Route path="/tutor-homePage" element={<TutorHomePage />} />
-
-          <Route path="/learnerHomePage" element={<HomePage2 />} />
-          <Route path="/community" element={<Community />} />
-          <Route path="/dashboard" element={<Dashboard />}>
-            <Route index element={<LearningOverview />} />
-            <Route path="learning" element={<LearningOverview />} />
-            <Route path="sessions" element={<SessionManagement />} />
-            <Route path="financial" element={<FinancialHub />} />
-            <Route path="profile" element={<ProfileNexus />} />
-          </Route>
-        </Routes>
-      </AuthProvider>
-    </Router>
+    <div>
+      <Router>
+        <AuthProvider>
+          <ToastContainer />
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route
+              path="/auth/learner-registration"
+              element={<LearnerRegister />}
+            />
+            <Route path="/auth/tutor-registration" element={<TutorRegister />} />
+            <Route path="/auth/learner-login" element={<LearnerLogin />} />
+            <Route path="/auth/tutor-login" element={<TutorLogin />} />
+            <Route path="/learner-homePage" element={<LearnerHomePage />} />
+            <Route path="/tutor-homePage" element={<TutorHomePage />} />
+            <Route path="/learnerHomePage" element={<HomePage2 />} />
+            <Route path="/community" element={<Community />} />
+            <Route path="/dashboard" element={<Dashboard />}>
+              <Route index element={<LearningOverview />} />
+              <Route path="learning" element={<LearningOverview />} />
+              <Route path="sessions" element={<SessionManagement />} />
+              <Route path="financial" element={<FinancialHub />} />
+              <Route path="profile" element={<ProfileNexus />} />
+            </Route>
+          </Routes>
+        </AuthProvider>
+      </Router>
+      <Analytics />
+    </div>
   );
 }
 
