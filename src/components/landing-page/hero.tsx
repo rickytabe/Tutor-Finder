@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Squares from "../styled-components/Squares.jsx";
 import StyledButton1 from "../styled-components/button";
 
@@ -40,13 +41,14 @@ const HeroSection = () => {
           {/* Action Buttons */}
           <div className="flex flex-col md:flex-row justify-center gap-4 mb-8">
             <StyledButton1 text="Browse Tutors" />
-            <button
+            <Link
+              to='/auth/tutor-registration'
               className="px-8 py-3 text-lg font-medium text-white 
                             bg-transparent border-2 border-white/30 rounded-lg
                             hover:bg-white/10 hover:border-white/50 transition-all"
             >
               Become a Tutor
-            </button>
+            </Link>
           </div>
           {/* Trust Badges */}
           <div className="flex flex-wrap text-xl justify-center gap-6 text-white/80 mb-8">
