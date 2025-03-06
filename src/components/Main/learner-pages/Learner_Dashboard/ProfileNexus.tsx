@@ -44,8 +44,8 @@ const ProfileNexus: React.FC = () => {
           notifications_enabled: data.notifications_enabled,
           timezone: data.timezone || 'UTC+0'
         });
-      } catch (error) {
-        setError(error.message);
+      } catch (error: any) {
+        setError(`An Error Happened: ${error.message}`);
       } finally {
         setLoading(false);
       }
