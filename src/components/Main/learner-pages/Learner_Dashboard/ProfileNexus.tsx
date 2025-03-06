@@ -1,97 +1,93 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '../../../../store/store';
-import { getUserDoc } from '../../../../firebase/firebaseServices';
-import { Learner, Tutor } from '../../../../types/users';
-import { setUser, setLoading } from '../../../../store/reducers/AuthSlice';
-import { auth } from '../../../../firebase/firebaseConfig';
-import { persistStore } from 'redux-persist';
-import store from '../../../../store/store';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../store/store';
+import { User, Mail, Phone, MapPin, Settings, Bell, Clock, BookOpen } from 'react-feather';
 
 const ProfileNexus: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { user, loading } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
   const [profile, setProfile] = useState({
-    fullName: '',
+    name: '',
     email: '',
-    language: 'English',
-    notification: true,
-    timezone: 'UTC+0',
-    profilePic: '',
-    preferredLearningStyle: '',
+    phone_number: '',
+    whatsapp_number:"",
     location: '',
+    profile_image: '',
+    created_at: '',
+    learning_style: 'Visual',
+    notifications_enabled: true,
+    timezone: 'UTC+0'
   });
-  const [isRehydrated, setIsRehydrated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchProfile = async () => {
-      if (user?.uid) {
-        const userProfile = await getUserDoc(user.uid) as Learner | Tutor | undefined;
-        if (userProfile) {
-          setProfile({
-            fullName: 'displayName' in (userProfile as Learner | Tutor) ? (userProfile as Learner).displayName : '',
-            email: userProfile.email || '',
-            language: 'language' in userProfile ? (userProfile.language as string) : 'English',
-            notification: 'notification' in userProfile ? Boolean(userProfile.notification) : true,
-            timezone: 'UTC+0',
-            profilePic: 'https://i.pravatar.cc/150?img=57',
-            preferredLearningStyle: 'preferredLearningStyle' in userProfile ? userProfile.preferredLearningStyle : 'Visual',
-            location: 'location' in userProfile && userProfile.location ? userProfile.location : 'Not specified',
-          });
-        }
+      try {
+        const response = await fetch(`${import.meta.env.VITE_Base_URL}/user`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch profile');
+        
+        const data = await response.json();
+        setProfile({
+          name: data.name,
+          email: data.email,
+          phone_number: data.phone_number,
+          whatsapp_number:data.whatsapp_number,
+          location: data.location,
+          profile_image: data.profile_image || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=teal&color=fff`,
+          created_at: new Date(data.created_at).toLocaleDateString(),
+          learning_style: data.learning_style || 'Visual',
+          notifications_enabled: data.notifications_enabled,
+          timezone: data.timezone || 'UTC+0'
+        });
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchProfile();
+    if (user) fetchProfile();
   }, [user]);
 
-  useEffect(() => {
-    const unsubscribeAuth = auth.onAuthStateChanged((firebaseUser) => {
-      if (firebaseUser) {
-        const serializableUser = {
-          uid: firebaseUser.uid,
-          email: firebaseUser.email,
-          displayName: firebaseUser.displayName,
-        };
-        dispatch(setUser(serializableUser));
-      }
-      dispatch(setLoading(false));
-    });
-
-    const unsubscribePersist = persistStore(store).subscribe(() => {
-      setIsRehydrated(true);
-    });
-
-    return () => {
-      unsubscribeAuth();
-      unsubscribePersist();
-    };
-  }, [dispatch]);
-
-  const handleChange = (field: keyof typeof profile, value: any) => {
-    setProfile({ ...profile, [field]: value });
-  };
-
-  if (!isRehydrated || loading) {
+  if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gradient-to-r from-blue-50 to-purple-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600"></div>
+      <div className="flex justify-center items-center h-screen bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-50">
+        <div className="text-center p-8 max-w-md bg-white rounded-xl shadow-lg">
+          <div className="text-red-500 text-lg mb-4">Error: {error}</div>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gradient-to-r from-blue-50 to-purple-50">
-        <div className="text-center">
-          <div className="text-red-500 text-xl mb-4">
-            You are not signed in yet.
-          </div>
+      <div className="flex justify-center items-center h-screen bg-gray-50">
+        <div className="text-center p-8 max-w-md bg-white rounded-xl shadow-lg">
+          <div className="text-gray-600 text-lg mb-4">Please sign in to view your profile</div>
           <a
             href="/auth/learner-login"
-            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+            className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
           >
-            Go to Learner Sign In
+            Sign In
           </a>
         </div>
       </div>
@@ -99,82 +95,115 @@ const ProfileNexus: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 p-10">
-      <div className="bg-white p-6 rounded-xl shadow">
-        <h3 className="text-lg font-semibold mb-4">👤 Personal Information</h3>
-        <form className="space-y-4">
-          <div className="flex items-center space-x-4">
+    <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
+      {/* Profile Header */}
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div className="h-32 bg-teal-600 relative">
+          <div className="absolute -bottom-16 left-6">
             <img
-              src={profile.profilePic}
+              src={profile.profile_image}
               alt="Profile"
-              className="w-16 h-16 rounded-full"
-            />
-            <div>
-              <label className="block text-sm mb-1">Full Name</label>
-              <input
-                type="text"
-                className="w-full p-2 border rounded-lg"
-                value={profile.fullName}
-                onChange={(e) => handleChange('fullName', e.target.value)}
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm mb-1">Email</label>
-            <input
-              type="email"
-              className="w-full p-2 border rounded-lg"
-              value={profile.email}
-              onChange={(e) => handleChange('email', e.target.value)}
+              className="w-32 h-32 rounded-full border-4 border-white shadow-lg"
             />
           </div>
-        </form>
+        </div>
+        
+        <div className="pt-20 px-6 pb-6">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">{profile.name}</h1>
+          <div className="flex items-center text-gray-600 mb-4">
+            <User className="mr-2" size={18} />
+            <span>Member since {profile.created_at}</span>
+          </div>
+        </div>
       </div>
 
-      <div className="bg-white p-6 rounded-xl shadow">
-        <h3 className="text-lg font-semibold mb-4">⚙️ Preferences</h3>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <span>Notification Emails</span>
-            <label className="switch">
-              <input
-                type="checkbox"
-                checked={profile.notification}
-                onChange={(e) => handleChange('notification', e.target.checked)}
-              />
-              <span className="slider"></span>
-            </label>
+      {/* Profile Details Grid */}
+      <div className="grid md:grid-cols-2 gap-6 mt-6">
+        {/* Personal Information */}
+        <div className="bg-white p-6 rounded-xl shadow-lg">
+          <h2 className="text-xl font-semibold mb-4 flex items-center">
+            <User className="mr-2 text-teal-600" size={20} />
+            Personal Information
+          </h2>
+          <div className="space-y-3">
+            <div className="flex items-center">
+              <Mail className="mr-3 text-gray-500" size={18} />
+              <div>
+                <p className="text-sm text-gray-500">Email</p>
+                <p className="text-gray-800">{profile.email}</p>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <Phone className="mr-3 text-gray-500" size={18} />
+              <div>
+                <p className="text-sm text-gray-500">Phone</p>
+                <p className="text-gray-800">{profile.phone_number || 'Not provided'}</p>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <MapPin className="mr-3 text-gray-500" size={18} />
+              <div>
+                <p className="text-sm text-gray-500">Location</p>
+                <p className="text-gray-800">{profile.location || 'Not specified'}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Preferences */}
+        <div className="bg-white p-6 rounded-xl shadow-lg">
+          <h2 className="text-xl font-semibold mb-4 flex items-center">
+            <Settings className="mr-2 text-teal-600" size={20} />
+            Preferences
+          </h2>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Bell className="mr-3 text-gray-500" size={18} />
+                <span>Notifications</span>
+              </div>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={profile.notifications_enabled}
+                  readOnly
+                />
+                <span className="slider"></span>
+              </label>
+            </div>
+            <div className="flex items-center">
+              <Clock className="mr-3 text-gray-500" size={18} />
+              <div>
+                <p className="text-sm text-gray-500">Timezone</p>
+                <p className="text-gray-800">{profile.timezone}</p>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <BookOpen className="mr-3 text-gray-500" size={18} />
+              <div>
+                <p className="text-sm text-gray-500">Learning Style</p>
+                <p className="text-gray-800">{profile.learning_style}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Card */}
+      <div className="mt-6 bg-gradient-to-r from-teal-600 to-teal-500 p-6 rounded-xl shadow-lg text-white">
+        <h3 className="text-lg font-semibold mb-4">Learning Statistics</h3>
+        <div className="grid grid-cols-3 gap-4 text-center">
+          <div>
+            <p className="text-2xl font-bold">12</p>
+            <p className="text-sm">Completed Courses</p>
           </div>
           <div>
-            <label className="block text-sm mb-1">Timezone</label>
-            <select
-              className="w-full p-2 border rounded-lg"
-              value={profile.timezone}
-              onChange={(e) => handleChange('timezone', e.target.value)}
-            >
-              <option value="UTC+0">GMT (UTC+0)</option>
-              <option value="UTC+1">CET (UTC+1)</option>
-              <option value="UTC-5">EST (UTC-5)</option>
-              {/* Add more timezones as needed */}
-            </select>
+            <p className="text-2xl font-bold">24h</p>
+            <p className="text-sm">Learning Time</p>
           </div>
           <div>
-            <label className="block text-sm mb-1">Preferred Learning Style</label>
-            <input
-              type="text"
-              className="w-full p-2 border rounded-lg"
-              value={profile.preferredLearningStyle}
-              onChange={(e) => handleChange('preferredLearningStyle', e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-sm mb-1">Location</label>
-            <input
-              type="text"
-              className="w-full p-2 border rounded-lg"
-              value={profile.location}
-              onChange={(e) => handleChange('location', e.target.value)}
-            />
+            <p className="text-2xl font-bold">A+</p>
+            <p className="text-sm">Average Grade</p>
           </div>
         </div>
       </div>

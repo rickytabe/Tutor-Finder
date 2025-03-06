@@ -50,7 +50,7 @@ function App() {
       </Router>
       <Analytics />
     </div>
-  );
+  ); 
 }
 
 export default App;

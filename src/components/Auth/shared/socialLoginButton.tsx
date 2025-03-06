@@ -2,12 +2,18 @@
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
 import { signInWithGoogle, signInWithApple } from '../../../firebase/firebaseServices';
+import {useNavigate} from 'react-router'
 
 const SocialAuthButtons = () => {
+  const navigate = useNavigate();
   const handleGoogleSignIn = async () => {
     try {
       const user = await signInWithGoogle();
       console.log('Google Sign-In successful:', user);
+      //delay for 1 sec and navigate to the home page
+      setTimeout(() => {
+        navigate('/learnerHomePage');
+      }, 1000);
     } catch (error) {
       console.error('Google Sign-In error:', error);
     }

@@ -33,10 +33,10 @@ const HomePage2: React.FC = () => {
     filters.tutorType === "all";
 
   return (
-    <div className="min-h-screen min-w-screen bg-gradient-to-r from-blue-600 to-purple-600 ">
+    <div className="min-h-screen min-w-screen bg-gradient-to-r from-blue-600 to-purple-600  ">
       <NavBar />
       <Hero filters={filters} onSearch={setFilters} />
-      <main>
+      <div className='bg-red' >
         <SearchFilter filters={filters} onFilterChange={setFilters} />
         <div className="container mx-auto px-4 py-8">
           {showFeaturedSections ? (
@@ -73,7 +73,7 @@ const HomePage2: React.FC = () => {
             </>
           )}
         </div>
-      </main>
+      </div>
 
       <Footer />
     </div>

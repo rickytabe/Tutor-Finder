@@ -32,7 +32,7 @@ const NavBar: React.FC<NavBarProps> = () => {
 
   // Style variables
   const navContainerStyles = 
-    "fixed top-0 left-0 w-full text-white z-30 transition-all duration-300 bg-gradient-to-r from-blue-600 to-purple-600 backdrop-blur-sm shadow-xl";
+    "fixed top-0 left-0 w-full text-white z-30 transition-all duration-300 bg-black/80 backdrop-blur-sm shadow-xl";
   const mobileMenuButtonStyles =
     "md:hidden p-2 text-white hover:text-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full";
   const logoStyles = "text-2xl font-bold flex items-center";

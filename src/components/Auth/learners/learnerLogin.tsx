@@ -4,11 +4,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import AuthWrapper from '../shared/authWrapper'; 
 import { validateEmail } from '../shared/authUtils';
 import SocialAuthButton from '../shared/socialLoginButton';
-import { useAuth } from '../shared/firebaseAuthUtils';
 import { toast } from 'react-toastify';
 
 export const LearnerLogin = () => {
-  const { signIn } = useAuth(); // Get the signIn function
   const navigate = useNavigate(); // Initialize useNavigate
 
   const [formData, setFormData] = useState({
@@ -27,26 +25,36 @@ export const LearnerLogin = () => {
     if (Object.keys(validationErrors).length === 0) {
       setIsSubmitting(true);
       try {
-        await signIn(formData.email, formData.password); // Call signIn function
+        const formPayload = new FormData();
+        for (const [key, value] of Object.entries(formData)) {
+          if (value !== null) formPayload.append(key, value);
+        }
+  
+      const response = await fetch(`${import.meta.env.VITE_Base_URL}/login`, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: formPayload,
+      });
+        
+      const data = await response.json()
+      console.log('endpoint: ', `${import.meta.env.VITE_Base_URL}/signup`);
+      console.log('uuser: ', data)
+      console.log('token', data.token)
+        
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Registration failed");
+      }
         toast.success('Login successful!');
 
         setTimeout(()=>{
           navigate("/LearnerHomePage")
-        }, 3000) // Redirect after successful login
-
+        }, 1000) // Redirect after successful login
       } catch (error: any) {
         console.error('Login error:', error);
         // Handle errors (e.g., display error message)
-        if (error.code === "auth/user-not-found") {
-          toast.error("User not found. Please check your email or sign up.");
-          setFormError('User not found. Please check your email or sign up')
-        } else if (error.code === "auth/invalid-credential") {
-          toast.error("Incorrect email or password. Please try again.");
-          setFormError('Incorrect email or password. Please try again.');
-        } else {
-          toast.error("Sign in failed. Please try again later (check your internet connectivity).");
-          setFormError('Sign in failed. Please try again later (check your interner connectivity).')
-        }
+        setFormError(error.message || "Login Failed, please try again");
+        toast.error(error.message || "Login Failed, Please try again")
       } finally {
         setIsSubmitting(false);
       }

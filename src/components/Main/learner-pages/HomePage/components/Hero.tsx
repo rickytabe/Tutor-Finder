@@ -2,11 +2,19 @@
 import React from "react";
 import { SearchFilters } from "../../types";
 import Icon from "./icons";
+import Squares from '../../../../styled-components/Squares.jsx'
 
 interface HeroProps {
   filters: SearchFilters;
   onSearch: (newFilters: SearchFilters) => void;
 }
+const SquaresComponent = Squares as React.FC<{
+  speed?: number;
+  squareSize?: number;
+  direction?: string;
+  borderColor?: string;
+  hoverFillColor?: string;
+}>;
 
 const Hero: React.FC<HeroProps> = ({ filters, onSearch }) => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,8 +27,18 @@ const Hero: React.FC<HeroProps> = ({ filters, onSearch }) => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-600 to-purple-600 shadow-xl pt-40">
-      <div className="container mx-auto px-4 py-6">
+    <div className="relative bg-black shadow-xl pt-40 flex items-center  justify-center">
+      <div className="absolute inset-0 z-0">
+        <SquaresComponent
+          speed={0.15}
+          squareSize={50}
+          direction="diagonal"
+          borderColor="rgba(255,255,255,0.15)"
+          hoverFillColor="#222"
+        />
+      </div>
+
+      <div className="container mx-auto px-4 py-6 z-10">
         <div className="max-w-3xl mx-auto mb-12">
           <h2 className="text-4xl font-bold text-white mb-6 text-center">
             Learn with expert tutors

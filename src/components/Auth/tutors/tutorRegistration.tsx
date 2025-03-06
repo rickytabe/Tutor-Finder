@@ -1,343 +1,351 @@
-// src/auth/tutors/TutorRegister.tsx
-import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+// src/auth/learners/LearnerRegister.tsx
+import { useState, useRef, useEffect } from "react";
 import AuthWrapper from "../shared/authWrapper";
-import {
-  handleFirebaseError,
-  validateEmail,
-  validatePassword,
-} from "../shared/authUtils";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
-import { useAuth } from "../shared/firebaseAuthUtils";
+import SocialAuthButtons from "../shared/socialLoginButton";
+import { validateEmail, validatePassword } from "../shared/authUtils";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { User, Mail, Lock, MapPin, Camera, Eye, EyeOff, Phone } from "react-feather";
 
-type TutorFormData = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  qualifications: string;
-  experience: string;
-  subjects: string;
-  hourlyRate: string;
-};
-
-export const TutorRegister = () => {
-  const { signUp } = useAuth();
+const TutorRegister = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<TutorFormData>({
-    firstName: "",
-    lastName: "",
+  const [formData, setFormData] = useState({
+    name: "",
     email: "",
     password: "",
-    confirmPassword: "",
-    qualifications: "",
-    experience: "",
-    subjects: "",
-    hourlyRate: "",
+    password_confirmation: "",
+    phone_number: "",
+    whatsapp_number: "",
+    user_type: "tutor",
+    location: "",
+    profile_image: null as File | null,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  // Live validation for password fields
+  useEffect(() => {
+    const passwordError = validatePassword(formData.password) || "";
+    let confirmationError = "";
+    
+    if (formData.password_confirmation) {
+      confirmationError = formData.password !== formData.password_confirmation 
+        ? "Passwords do not match" 
+        : "";
+    } else {
+      confirmationError = "Confirm password is required";
+    }
+
+    setErrors(prev => ({
+      ...prev,
+      password: passwordError,
+      password_confirmation: confirmationError
+    }));
+  }, [formData.password, formData.password_confirmation]);
+
+  const validateField = (name: string, value: string) => {
+    let error = "";
+    
+    switch (name) {
+      case "name":
+        error = value.trim() ? "" : "Name is required";
+        break;
+      case "email":
+        error = validateEmail(value) ? "" : "Invalid email address";
+        break;
+      case "phone_number":
+        error = value ? "" : "Phone number is required";
+        break;
+      case "whatsapp_number":
+        error = value ? "" : "WhatsApp Number is required"
+        break;
+      case "password":
+        error = value ? "" : "Password is required"
+        break;
+      case "confirm_password":
+        error = value ? "" : "Confirm Password is required"
+        break;
+      case "location":
+        error = value ? "" : "Location is required";
+        break;
+    }
+
+    setErrors(prev => ({ ...prev, [name]: error }));
+  };
+
+  const handleChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    validateField(field, value);
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) setFormData(prev => ({ ...prev, profile_image: file }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors = validateTutorForm();
+    setFormError(null);
+    
+    // Final validation check
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) return;
 
-    if (Object.keys(newErrors).length === 0) {
-      setIsSubmitting(true);
-      try {
-        const { password, confirmPassword, ...formDataWithoutPassword } =
-          formData;
-        await signUp(
-          formData.email,
-          formData.password,
-          "tutor",
-          formDataWithoutPassword
-        ); // Pass all formData
-        toast.success("Tutor application submitted successfully!");
-
-        // Redirect or show a success message
-        setTimeout(() => {
-          navigate("/tutor-homePage"); 
-        }, 3000);
-      } catch (error: any) {
-        // Correct error typing
-        console.error("Tutor registration error:", error);
-        const errorMessage =
-          handleFirebaseError(error.code) ||
-          "Tutor registration failed. Please try again later.";
-        setFormError(errorMessage); // Set the error message
-        // Handle errors (e.g., display error message, re-enable submit button)
-      } finally {
-        setIsSubmitting(false);
+    setIsSubmitting(true);
+    try {
+      const formPayload = new FormData();
+      for (const [key, value] of Object.entries(formData)) {
+        if (value !== null) formPayload.append(key, value);
       }
+
+      const response = await fetch(`${import.meta.env.VITE_Base_URL}/signup`, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: formPayload,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Registration failed");
+      }
+
+      toast.success("Registration successful!");
+      navigate('/learnerHomePage');
+    } catch (error: any) {
+      setFormError(error.message || "Registration failed. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const validateTutorForm = () => {
+  const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.firstName.trim())
-      newErrors.firstName = "First name is required";
-
-    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
-
-    if (!validateEmail(formData.email))
-      newErrors.email = "Invalid email address";
-
-    const passwordError = validatePassword(formData.password); // Get error message
-    if (passwordError) {
-      // Check if there's an error
-      newErrors.password = passwordError; // Store the message
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    } else if (formData.confirmPassword.length < 1) {
-      newErrors.confirmPassword = "Confirm password is required";
-    }
-
-    if (!formData.qualifications.trim())
-      newErrors.qualifications = "Qualifications are required";
-
-    if (!formData.experience.trim())
-      newErrors.experience = "Experience is required";
-
-    if (!formData.subjects.trim()) newErrors.subjects = "Subjects are required";
-
-    if (!formData.hourlyRate.trim())
-      newErrors.hourlyRate = "Hourly rate is required";
-
+    
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!validateEmail(formData.email)) newErrors.email = "Invalid email address";
+    if (!formData.phone_number) newErrors.phone_number = "Phone number is required";
+    if (!formData.whatsapp_number) newErrors.whatsapp_number = "Whatsapp number is required";
+    if (!formData.location) newErrors.location = "Location is required";
+    if (!formData.password) newErrors.password = "Password is required";
+    if (!formData.password_confirmation) newErrors.password_confirmation = "Confirm password is required";
+    
     setErrors(newErrors);
     return newErrors;
   };
 
   return (
     <AuthWrapper
-      title="Become a Verified Tutor"
-      subtitle="Complete your tutor application"
-      isTutor
+      isTutor={true}
+      title="Become a Tutor Today"
+      subtitle="Create your free Tutor account"
     >
       <form onSubmit={handleSubmit} className="mt-8 space-y-6">
         <div className="grid grid-cols-1 gap-4">
-          <p className="text-red-500 my-2">{formError}</p>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              First Name
-            </label>
-            <input
-              type="text"
-              placeholder="First Name"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              className={`mt-1 block w-full px-4 py-3 border rounded-lg ${
-                errors.firstName ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-            {errors.firstName && (
-              <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
-            )}
+          <p className='text-red-600 text-sm my-2'>{formError}</p>
+
+          {/* Profile Image Upload */}
+          <div className="flex justify-center">
+            <div className="relative group">
+              <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer overflow-hidden border-2 border-dashed border-gray-300 hover:border-teal-600 transition-colors">
+                {formData.profile_image ? (
+                  <img 
+                    src={URL.createObjectURL(formData.profile_image)} 
+                    alt="Profile" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-gray-500">
+                    <User size={40} />
+                  </div>
+                )}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  accept="image/*"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="absolute bottom-0 right-0 bg-teal-600 text-white rounded-full p-1.5 hover:bg-teal-700 transition-colors shadow-sm"
+              >
+                <Camera size={16} />
+              </button>
+            </div>
           </div>
 
+          {/* Name Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Last Name
-            </label>
-            <input
-              type="text"
-              value={formData.lastName}
-              name="lastName"
-              placeholder="Last Name"
-              onChange={handleChange}
-              className={`mt-1 block w-full px-4 py-3 border rounded-lg ${
-                errors.lastName ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-            {errors.lastName && (
-              <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
-            )}
-          </div>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-            type="email"
-            value={formData.email}
-            name="email"
-            placeholder="Email"
-            onChange={handleChange}
-            className={`mt-1 block w-full px-4 py-3 border rounded-lg ${
-              errors.email ? "border-red-500" : "border-gray-300"
-            }`}
-          />
-          {errors.email && (
-            <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-          )}
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Name</label>
             <div className="relative mt-1">
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-900" size={20} />
+              <input
+                type="text"
+                placeholder="Enter Your Name"
+                value={formData.name}
+                onChange={(e) => handleChange("name", e.target.value)}
+                onBlur={(e) => validateField("name", e.target.value)}
+                className={`pl-10 mt-1 block w-full px-4 py-3 border rounded-lg ${
+                  errors.name ? 'border-red-500' : 'border-gray-300'
+                } focus:ring-2 focus:ring-teal-500 focus:border-teal-500`}
+              />
+              {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+            </div>
+          </div>
+
+          {/* Email Input */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <div className="relative mt-1">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-900" size={20} />
+              <input
+                type="email"
+                placeholder="Enter Your Email Address"
+                value={formData.email}
+                onChange={(e) => handleChange("email", e.target.value)}
+                onBlur={(e) => validateField("email", e.target.value)}
+                className={`pl-10 mt-1 block w-full px-4 py-3 border rounded-lg ${
+                  errors.email ? "border-red-500" : "border-gray-300"
+                } focus:ring-2 focus:ring-teal-500 focus:border-teal-500`}
+              />
+              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+            </div>
+          </div>
+
+          {/* Phone Number Input */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+            <div className="mt-1">
+              <div className="relative">
+                <input
+                  type="tel"
+                  placeholder="Enter Your Phone Number"
+                  value={formData.phone_number}
+                  onChange={(e) => handleChange("phone_number", e.target.value)}
+                  onBlur={(e) => validateField("phone_number", e.target.value)}
+                  className={`pl-10 w-full px-4 py-3 border rounded-lg ${
+                    errors.phone_number ? 'border-red-500' : 'border-gray-300'
+                  } focus:ring-2 focus:ring-teal-500 focus:border-teal-500`}
+                />
+                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-900 h-5 w-5" />
+              </div>
+              {errors.phone_number && <p className="mt-1 text-sm text-red-600">{errors.phone_number}</p>}
+            </div>
+          </div>
+
+           {/* Phone Number Input */}
+           <div>
+            <label className="block text-sm font-medium text-gray-700">WhatsApp Number</label>
+            <div className="mt-1">
+              <div className="relative">
+                <input
+                  type="tel"
+                  placeholder="Enter Your WhatsApp Number"
+                  value={formData.whatsapp_number}
+                  onChange={(e) => handleChange("whatsapp_number", e.target.value)}
+                  onBlur={(e) => validateField("whatsapp_number", e.target.value)}
+                  className={`pl-10 w-full px-4 py-3 border rounded-lg ${
+                    errors.phone_number ? 'border-red-500' : 'border-gray-300'
+                  } focus:ring-2 focus:ring-teal-500 focus:border-teal-500`}
+                />
+                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-900 h-5 w-5" />
+              </div>
+              {errors.phone_number && <p className="mt-1 text-sm text-red-600">{errors.whatsapp_number}</p>}
+            </div>
+          </div>
+
+          {/* Location Input */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Location</label>
+            <div className="relative mt-1">
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-900 z-10" size={20} />
+              <input
+                type="text"
+                placeholder="Enter your location"
+                value={formData.location}
+                onChange={(e) => handleChange("location", e.target.value)}
+                onBlur={(e) => validateField("location", e.target.value)}
+                className={`pl-10 mt-1 block w-full px-4 py-3 border rounded-lg ${
+                  errors.location ? 'border-red-500' : 'border-gray-300'
+                } focus:ring-2 focus:ring-teal-500 focus:border-teal-500`}
+              />
+              </div>
+              {errors.location && <p className="mt-1 text-sm text-red-600">{errors.location}</p>}
+          </div>
+
+          {/* Password Input */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <div className="relative mt-1">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-900" size={20} />
               <input
                 type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="Password"
+                placeholder="Enter Your Password"
                 value={formData.password}
-                onChange={handleChange}
-                className={`mt-1 block w-full px-4 py-3 border rounded-lg ${
+                onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                className={`pl-10 w-full px-4 py-3 border rounded-lg ${
                   errors.password ? "border-red-500" : "border-gray-300"
-                }`}
+                } focus:ring-2 focus:ring-teal-500 focus:border-teal-500`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
               >
-                {showPassword ? "🙈" : "👁️"}
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
-            {errors.password && (
-              <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-            )}
+            {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
           </div>
 
+          {/* Confirm Password Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Confirm Password
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
             <div className="relative mt-1">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-900" size={20} />
               <input
-                type={showPassword ? "text" : "password"}
-                name="confirmPassword"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className={`mt-1 block w-full px-4 py-3 border rounded-lg ${
-                  errors.confirmPassword ? "border-red-500" : "border-gray-300"
-                }`}
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm Your Password"
+                value={formData.password_confirmation}
+                onChange={(e) => setFormData(prev => ({ ...prev, password_confirmation: e.target.value }))}
+                className={`pl-10 w-full px-4 py-3 border rounded-lg ${
+                  errors.password_confirmation ? "border-red-500" : "border-gray-300"
+                } focus:ring-2 focus:ring-teal-500 focus:border-teal-500`}
               />
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
               >
-                {showPassword ? "🙈" : "👁️"}
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
-
-            {errors.confirmPassword && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.confirmPassword}
-              </p>
+            {errors.password_confirmation && (
+              <p className="mt-1 text-sm text-red-600">{errors.password_confirmation}</p>
             )}
           </div>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Qualifications
-          </label>
-          <textarea
-            value={formData.qualifications}
-            onChange={handleChange}
-            name="qualifications"
-            placeholder="Qualification"
-            rows={3}
-            className={`mt-1 block w-full px-4 py-3 border rounded-lg ${
-              errors.qualifications ? "border-red-500" : "border-gray-300"
-            }`}
-          />
-          {errors.qualifications && (
-            <p className="mt-1 text-sm text-red-600">{errors.qualifications}</p>
-          )}
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Experience (Years)
-            </label>
-            <input
-              type="number"
-              name="experience"
-              placeholder="Experience"
-              value={formData.experience}
-              onChange={handleChange}
-              className={`mt-1 block w-full px-4 py-3 border rounded-lg ${
-                errors.experience ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-            {errors.experience && (
-              <p className="mt-1 text-sm text-red-600">{errors.experience}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Hourly Rate ($)
-            </label>
-            <input
-              type="number"
-              placeholder="Hourly Rate"
-              name="hourlyRate"
-              value={formData.hourlyRate}
-              onChange={handleChange}
-              className={`mt-1 block w-full px-4 py-3 border rounded-lg ${
-                errors.hourlyRate ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-            {errors.hourlyRate && (
-              <p className="mt-1 text-sm text-red-600">{errors.hourlyRate}</p>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Subjects Taught
-          </label>
-          <input
-            type="text"
-            name="subjects"
-            value={formData.subjects}
-            onChange={handleChange}
-            className={`mt-1 block w-full px-4 py-3 border rounded-lg ${
-              errors.subjects ? "border-red-500" : "border-gray-300"
-            }`}
-            placeholder="Separate subjects with commas"
-          />
-          {errors.subjects && (
-            <p className="mt-1 text-sm text-red-600">{errors.subjects}</p>
-          )}
         </div>
 
         <button
           type="submit"
-          className="w-full bg-teal-600 text-white py-3 rounded-lg hover:bg-teal-700 transition-colors"
+          disabled={isSubmitting}
+          className="w-full bg-teal-600 text-white py-3 rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting
-            ? "Submiting Your Application..."
-            : "Submit Your Application"}
+          {isSubmitting ? "Creating Account..." : "Create Learner Account"}
         </button>
+
+        <SocialAuthButtons />
         <div className="mt-8 text-center text-sm text-gray-600">
           Already Registered?{" "}
           <Link
             className="text-teal-600 hover:text-teal-700 font-bold"
-            to="/auth/tutor-login"
+            to="/auth/learner-login"
           >
             Sign In
           </Link>
@@ -348,3 +356,4 @@ export const TutorRegister = () => {
 };
 
 export default TutorRegister;
+

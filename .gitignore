@@ -24,3 +24,9 @@ dist-ssr
 *.sw?
 #env 
 .env
+
+#DOCS   
+Tutor_finder_DS.pdf
+tutor-finder-srs-mvp.pdf
+
+daily_task.txt
