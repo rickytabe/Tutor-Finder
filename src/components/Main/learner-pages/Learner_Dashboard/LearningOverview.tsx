@@ -1,11 +1,9 @@
 // components/Main/learner-pages/Learner_Dashboard/LearningOverview.tsx
 import ProgressBar from './Dashboard_Components/ProgressBar';
-import LearnerHomePage from './homePage';
 
 const LearningOverview: React.FC = () => {
   return (
     <div className="space-y-6">
-      <LearnerHomePage />
       <div className="grid md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-xl shadow">
           <h3 className="text-lg font-semibold mb-4">Course Progress</h3>

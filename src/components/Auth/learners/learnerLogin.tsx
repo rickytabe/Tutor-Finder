@@ -6,8 +6,10 @@ import { validateEmail } from '../shared/authUtils';
 import SocialAuthButton from '../shared/socialLoginButton';
 import { toast } from 'react-toastify';
 
+
+
 export const LearnerLogin = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate(); 
 
   const [formData, setFormData] = useState({
     email: '',
@@ -26,9 +28,8 @@ export const LearnerLogin = () => {
       setIsSubmitting(true);
       try {
         const formPayload = new FormData();
-        for (const [key, value] of Object.entries(formData)) {
-          if (value !== null) formPayload.append(key, value);
-        }
+        formPayload.append('email', formData.email);
+        formPayload.append('password', formData.password);
   
       const response = await fetch(`${import.meta.env.VITE_Base_URL}/login`, {
         method: 'POST',
@@ -37,24 +38,26 @@ export const LearnerLogin = () => {
       });
         
       const data = await response.json()
-      console.log('endpoint: ', `${import.meta.env.VITE_Base_URL}/signup`);
-      console.log('uuser: ', data)
-      console.log('token', data.token)
+      const userData = data['authenticated user']
+     // Store token and user data
+      localStorage.setItem('token', data.token); 
+      localStorage.setItem('user', JSON.stringify(userData));
+      console.log('user: ', data)
         
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Registration failed");
+        throw new Error(data.message || "Login failed");
       }
         toast.success('Login successful!');
 
         setTimeout(()=>{
           navigate("/LearnerHomePage")
-        }, 1000) // Redirect after successful login
+        }, 1000)
+
+
       } catch (error: any) {
-        console.error('Login error:', error);
-        // Handle errors (e.g., display error message)
+        // dispatch(authFailure(error.message));
         setFormError(error.message || "Login Failed, please try again");
-        toast.error(error.message || "Login Failed, Please try again")
+        toast.error(error.message || "Login Failed, Please try again");
       } finally {
         setIsSubmitting(false);
       }

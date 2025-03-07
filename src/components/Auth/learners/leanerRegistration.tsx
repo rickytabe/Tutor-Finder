@@ -87,6 +87,7 @@ export const LearnerRegister = () => {
     if (file) setFormData(prev => ({ ...prev, profile_image: file }));
   };
 
+  // Authentication function
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
@@ -94,44 +95,47 @@ export const LearnerRegister = () => {
     // Final validation check
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) return;
-
+  
     setIsSubmitting(true);
     try {
       const formPayload = new FormData();
       for (const [key, value] of Object.entries(formData)) {
         if (value !== null) formPayload.append(key, value);
       }
-
+  
       const response = await fetch(`${import.meta.env.VITE_Base_URL}/signup`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
         body: formPayload,
       });
-
-      const data = await response.json()
+  
+      const data = await response.json(); // Read once and store
+  
       console.log('endpoint: ', `${import.meta.env.VITE_Base_URL}/signup`);
-      console.log('uuser: ', data)
-
+      console.log('user: ', data);
+  
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Registration failed");
+        throw new Error(data.message || "Registration failed");
       }
-     // Store the token in localStorage
+
+      // Store the token in localStorage
       localStorage.setItem('token', data.token);
-      console.log('token', data.token)
-
-    // Optionally store user data
-    localStorage.setItem('user', JSON.stringify(data.user));
-
-
-      toast.success("Registration successful!");
+      console.log('token', data.token);
+  
+      // Optionally store user data
+      localStorage.setItem('user', JSON.stringify(data.user));
+  
+      toast.success(data.message || "Registration successful!");
       navigate('/learnerHomePage');
-      console.log(response)
     } catch (error: any) {
-      setFormError(error.message || "Registration failed. Please try again.");
+      // Handle different error types
+      const errorMessage = error.message || 
+                          error.response?.data?.message || 
+                          "Registration failed. Please try again.";
+      setFormError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -253,7 +257,7 @@ export const LearnerRegister = () => {
             </div>
           </div>
 
-           {/* Phone Number Input */}
+           {/* whatsapp Number Input */}
            <div>
             <label className="block text-sm font-medium text-gray-700">WhatsApp Number</label>
             <div className="mt-1">
@@ -270,7 +274,7 @@ export const LearnerRegister = () => {
                 />
                 <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-900 h-5 w-5" />
               </div>
-              {errors.phone_number && <p className="mt-1 text-sm text-red-600">{errors.whatsapp_number}</p>}
+              {errors.whatsapp_number && <p className="mt-1 text-sm text-red-600">{errors.whatsapp_number}</p>}
             </div>
           </div>
 

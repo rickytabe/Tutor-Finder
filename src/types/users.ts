@@ -32,9 +32,9 @@ export interface Tutor extends User {
 }
 
 export type SerializableUser = {
-  uid: string;
+  id: string;
   email: string | null;
-  displayName: string | null;
+  name: string | null;
 };
 
 // src/types/users.ts

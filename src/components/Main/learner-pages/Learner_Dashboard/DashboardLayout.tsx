@@ -45,8 +45,8 @@ const DashboardLayout: React.FC<Children> = ({ children }) => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 md:ml-64 p-2 bg-gradient-to-r from-blue-500 to-purple-500">
-        <div className="max-w-6xl mx-auto ">
+      <main className="flex-1 md:ml-64  bg-gray-500">
+        <div className="max-w-full mx-auto ">
           {/* Mobile Header with Dropdown */}
           <div className="md:hidden mb-6">
             <div className="flex justify-between items-center">

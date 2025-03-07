@@ -1,213 +1,127 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../../store/store';
-import { User, Mail, Phone, MapPin, Settings, Bell, Clock, BookOpen } from 'react-feather';
+// src/components/Profile.tsx
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FiUser, FiPhone, FiMapPin, FiCalendar, FiAward } from 'react-icons/fi';
+import { FaWhatsapp } from 'react-icons/fa';
 
-const ProfileNexus: React.FC = () => {
-  const { user } = useSelector((state: RootState) => state.auth);
-  const [profile, setProfile] = useState({
-    name: '',
-    email: '',
-    phone_number: '',
-    whatsapp_number:"",
-    location: '',
-    profile_image: '',
-    created_at: '',
-    learning_style: 'Visual',
-    notifications_enabled: true,
-    timezone: 'UTC+0'
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone_number?: string;
+  whatsapp_number?: string;
+  location?: string;
+  user_type: string;
+  profile_image?: string;
+  created_at: string;
+}
+
+const ProfileNexus = () => {
+  const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_Base_URL}/user`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
+    const storedUser = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
 
-        if (!response.ok) throw new Error('Failed to fetch profile');
-        
-        const data = await response.json();
-        setProfile({
-          name: data.name,
-          email: data.email,
-          phone_number: data.phone_number,
-          whatsapp_number:data.whatsapp_number,
-          location: data.location,
-          profile_image: data.profile_image || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=teal&color=fff`,
-          created_at: new Date(data.created_at).toLocaleDateString(),
-          learning_style: data.learning_style || 'Visual',
-          notifications_enabled: data.notifications_enabled,
-          timezone: data.timezone || 'UTC+0'
-        });
-      } catch (error: any) {
-        setError(`An Error Happened: ${error.message}`);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (!storedUser || !token) {
+      navigate('/auth/learner-login');
+      return;
+    }
 
-    if (user) fetchProfile();
-  }, [user]);
+    setUser(JSON.parse(storedUser));
+  }, [navigate]);
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-600"></div>
-      </div>
-    );
-  }
+  if (!user) return (
+    <div className="flex justify-center items-center h-screen bg-gradient-to-r from-gray-50 to-gray-100">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-600"></div>
+    </div>
+  );
 
-  if (error) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-gray-50">
-        <div className="text-center p-8 max-w-md bg-white rounded-xl shadow-lg">
-          <div className="text-red-500 text-lg mb-4">Error: {error}</div>
-          <button 
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // Validate image URL
+  // const isValidImage = user.profile_image?.startsWith('http://') || user.profile_image?.startsWith('https://');
+  // const avatarUrl = isValidImage ? user.profile_image : 'https://i.pinimg.com/736x/3f/94/70/3f9470b34a8e3f526dbdb022f9f19cf7.jpg';
 
-  if (!user) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-gray-50">
-        <div className="text-center p-8 max-w-md bg-white rounded-xl shadow-lg">
-          <div className="text-gray-600 text-lg mb-4">Please sign in to view your profile</div>
-          <a
-            href="/auth/learner-login"
-            className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
-          >
-            Sign In
-          </a>
-        </div>
-      </div>
-    );
-  }
+  // Format registration date
+  const registrationDate = new Date(user.created_at).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
-      {/* Profile Header */}
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div className="h-32 bg-teal-600 relative">
-          <div className="absolute -bottom-16 left-6">
-            <img
-              src={profile.profile_image}
-              alt="Profile"
-              className="w-32 h-32 rounded-full border-4 border-white shadow-lg"
-            />
-          </div>
-        </div>
-        
-        <div className="pt-20 px-6 pb-6">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">{profile.name}</h1>
-          <div className="flex items-center text-gray-600 mb-4">
-            <User className="mr-2" size={18} />
-            <span>Member since {profile.created_at}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Profile Details Grid */}
-      <div className="grid md:grid-cols-2 gap-6 mt-6">
-        {/* Personal Information */}
-        <div className="bg-white p-6 rounded-xl shadow-lg">
-          <h2 className="text-xl font-semibold mb-4 flex items-center">
-            <User className="mr-2 text-teal-600" size={20} />
-            Personal Information
-          </h2>
-          <div className="space-y-3">
-            <div className="flex items-center">
-              <Mail className="mr-3 text-gray-500" size={18} />
-              <div>
-                <p className="text-sm text-gray-500">Email</p>
-                <p className="text-gray-800">{profile.email}</p>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <Phone className="mr-3 text-gray-500" size={18} />
-              <div>
-                <p className="text-sm text-gray-500">Phone</p>
-                <p className="text-gray-800">{profile.phone_number || 'Not provided'}</p>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <MapPin className="mr-3 text-gray-500" size={18} />
-              <div>
-                <p className="text-sm text-gray-500">Location</p>
-                <p className="text-gray-800">{profile.location || 'Not specified'}</p>
-              </div>
+      <div className="w-full mx-auto bg-white overflow-hidden">
+        {/* Profile Header */}
+        <div className="relative bg-gradient-to-r from-teal-600 to-teal-500 h-48">
+          <div className="absolute -bottom-16 left-8">
+            <div className="relative group">
+              <img
+                src={user.profile_image || 'https://i.pinimg.com/736x/3f/94/70/3f9470b34a8e3f526dbdb022f9f19cf7.jpg'}
+                alt="Profile"
+                className="w-32 h-32 rounded-full border-4 border-white shadow-lg transform transition-transform duration-300 hover:scale-105"
+              />
             </div>
           </div>
         </div>
 
-        {/* Preferences */}
-        <div className="bg-white p-6 rounded-xl shadow-lg">
-          <h2 className="text-xl font-semibold mb-4 flex items-center">
-            <Settings className="mr-2 text-teal-600" size={20} />
-            Preferences
-          </h2>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <Bell className="mr-3 text-gray-500" size={18} />
-                <span>Notifications</span>
+        {/* Profile Content */}
+        <div className="pt-20 px-8 pb-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-800 mb-1 flex items-center gap-2">
+              <FiUser className="text-teal-600" />
+              {user.name}
+            </h1>
+            <p className="text-gray-600 text-lg">{user.email}</p>
+          </div>
+
+          {/* Details Grid */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <FiPhone className="text-teal-600 mr-4 text-xl" />
+                <div>
+                  <p className="text-sm text-gray-500">Phone Number</p>
+                  <p className="text-gray-800 font-medium">{user.phone_number || 'Not provided'}</p>
+                </div>
               </div>
-              <label className="switch">
-                <input
-                  type="checkbox"
-                  checked={profile.notifications_enabled}
-                  readOnly
-                />
-                <span className="slider"></span>
-              </label>
-            </div>
-            <div className="flex items-center">
-              <Clock className="mr-3 text-gray-500" size={18} />
-              <div>
-                <p className="text-sm text-gray-500">Timezone</p>
-                <p className="text-gray-800">{profile.timezone}</p>
+
+              <div className="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <FaWhatsapp className="text-green-600 mr-4 text-xl" />
+                <div>
+                  <p className="text-sm text-gray-500">WhatsApp Number</p>
+                  <p className="text-gray-800 font-medium">{user.whatsapp_number || 'Not provided'}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <FiMapPin className="text-teal-600 mr-4 text-xl" />
+                <div>
+                  <p className="text-sm text-gray-500">Location</p>
+                  <p className="text-gray-800 font-medium">{user.location || 'Not specified'}</p>
+                </div>
               </div>
             </div>
-            <div className="flex items-center">
-              <BookOpen className="mr-3 text-gray-500" size={18} />
-              <div>
-                <p className="text-sm text-gray-500">Learning Style</p>
-                <p className="text-gray-800">{profile.learning_style}</p>
+
+            <div className="space-y-4">
+              <div className="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <FiAward className="text-teal-600 mr-4 text-xl" />
+                <div>
+                  <p className="text-sm text-gray-500">Account Type</p>
+                  <p className="text-gray-800 font-medium capitalize">{user.user_type}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <FiCalendar className="text-teal-600 mr-4 text-xl" />
+                <div>
+                  <p className="text-sm text-gray-500">Member Since</p>
+                  <p className="text-gray-800 font-medium">{registrationDate}</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Stats Card */}
-      <div className="mt-6 bg-gradient-to-r from-teal-600 to-teal-500 p-6 rounded-xl shadow-lg text-white">
-        <h3 className="text-lg font-semibold mb-4">Learning Statistics</h3>
-        <div className="grid grid-cols-3 gap-4 text-center">
-          <div>
-            <p className="text-2xl font-bold">12</p>
-            <p className="text-sm">Completed Courses</p>
-          </div>
-          <div>
-            <p className="text-2xl font-bold">24h</p>
-            <p className="text-sm">Learning Time</p>
-          </div>
-          <div>
-            <p className="text-2xl font-bold">A+</p>
-            <p className="text-sm">Average Grade</p>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 };
 
