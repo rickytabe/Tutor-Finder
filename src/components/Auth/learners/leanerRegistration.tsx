@@ -124,16 +124,12 @@ export const LearnerRegister = () => {
       localStorage.setItem('token', data.token);
       console.log('token', data.token);
   
-      // Optionally store user data
-      localStorage.setItem('user', JSON.stringify(data.user));
   
-      toast.success(data.message || "Registration successful!");
-      navigate('/learnerHomePage');
+      toast.success(data.message || "Registration successful! Please login.");
+      navigate('/auth/learner-login');
     } catch (error: any) {
       // Handle different error types
-      const errorMessage = error.message || 
-                          error.response?.data?.message || 
-                          "Registration failed. Please try again.";
+      const errorMessage = error.message || "Registration failed. Please try again.";
       setFormError(errorMessage);
       toast.error(errorMessage);
     } finally {

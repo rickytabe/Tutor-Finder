@@ -39,8 +39,8 @@ const ProfileNexus = () => {
   );
 
   // Validate image URL
-  // const isValidImage = user.profile_image?.startsWith('http://') || user.profile_image?.startsWith('https://');
-  // const avatarUrl = isValidImage ? user.profile_image : 'https://i.pinimg.com/736x/3f/94/70/3f9470b34a8e3f526dbdb022f9f19cf7.jpg';
+  const isValidImage = user.profile_image?.startsWith('http://') || user.profile_image?.startsWith('https://');
+  const avatarUrl = isValidImage ? user.profile_image : 'https://i.pinimg.com/736x/3f/94/70/3f9470b34a8e3f526dbdb022f9f19cf7.jpg';
 
   // Format registration date
   const registrationDate = new Date(user.created_at).toLocaleDateString('en-US', {
@@ -56,7 +56,7 @@ const ProfileNexus = () => {
           <div className="absolute -bottom-16 left-8">
             <div className="relative group">
               <img
-                src={user.profile_image || 'https://i.pinimg.com/736x/3f/94/70/3f9470b34a8e3f526dbdb022f9f19cf7.jpg'}
+                src={avatarUrl}
                 alt="Profile"
                 className="w-32 h-32 rounded-full border-4 border-white shadow-lg transform transition-transform duration-300 hover:scale-105"
               />
