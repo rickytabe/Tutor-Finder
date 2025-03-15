@@ -1,8 +1,7 @@
-// src/auth/learners/LearnerRegister.tsx
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import AuthWrapper from "../shared/authWrapper";
 import SocialAuthButtons from "../shared/socialLoginButton";
-import { validateEmail, validatePassword } from "../shared/authUtils";
+import { validateEmail } from "../shared/authUtils";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { User, Mail, Lock, MapPin, Camera, Eye, EyeOff, Phone } from "react-feather";
@@ -27,26 +26,6 @@ export const LearnerRegister = () => {
   const [formError, setFormError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Live validation for password fields
-  useEffect(() => {
-    const passwordError = validatePassword(formData.password) || "";
-    let confirmationError = "";
-    
-    if (formData.password_confirmation) {
-      confirmationError = formData.password !== formData.password_confirmation 
-        ? "Passwords do not match" 
-        : "";
-    } else {
-      confirmationError = "Confirm password is required";
-    }
-
-    setErrors(prev => ({
-      ...prev,
-      password: passwordError,
-      password_confirmation: confirmationError
-    }));
-  }, [formData.password, formData.password_confirmation]);
-
   const validateField = (name: string, value: string) => {
     let error = "";
     
@@ -61,13 +40,17 @@ export const LearnerRegister = () => {
         error = value ? "" : "Phone number is required";
         break;
       case "whatsapp_number":
-        error = value ? "" : "WhatsApp Number is required"
+        error = value ? "" : "WhatsApp Number is required";
         break;
       case "password":
-        error = value ? "" : "Password is required"
+        error = value ? "" : "Password is required";
         break;
-      case "confirm_password":
-        error = value ? "" : "Confirm Password is required"
+      case "password_confirmation":
+        if (!value) {
+          error = "Confirm password is required";
+        } else if (value !== formData.password) {
+          error = "Passwords do not match";
+        }
         break;
       case "location":
         error = value ? "" : "Location is required";
@@ -87,53 +70,46 @@ export const LearnerRegister = () => {
     if (file) setFormData(prev => ({ ...prev, profile_image: file }));
   };
 
-  // Authentication function
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
     
-    // Final validation check
     const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) return;
+    if (Object.keys(validationErrors).length === 0) {
+      setIsSubmitting(true);
+      try {
+        const formPayload = new FormData();
+        for (const [key, value] of Object.entries(formData)) {
+          if (value !== null) formPayload.append(key, value);
+        }
   
-    setIsSubmitting(true);
-    try {
-      const formPayload = new FormData();
-      for (const [key, value] of Object.entries(formData)) {
-        if (value !== null) formPayload.append(key, value);
-      }
+        const response = await fetch(`${import.meta.env.VITE_Base_URL}/signup`, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json'
+          },
+          body: formPayload,
+        });
   
-      const response = await fetch(`${import.meta.env.VITE_Base_URL}/signup`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json'
-        },
-        body: formPayload,
-      });
+        const data = await response.json();
   
-      const data = await response.json(); // Read once and store
-  
-      console.log('endpoint: ', `${import.meta.env.VITE_Base_URL}/signup`);
-      console.log('user: ', data);
-  
-      if (!response.ok) {
-        throw new Error(data.message || "Registration failed");
-      }
+        if (!response.ok) {
+          throw new Error(data.message || "Registration failed");
+        }
 
-      // Store the token in localStorage
-      localStorage.setItem('token', data.token);
-      console.log('token', data.token);
-  
-  
-      toast.success(data.message || "Registration successful! Please login.");
-      navigate('/auth/learner-login');
-    } catch (error: any) {
-      // Handle different error types
-      const errorMessage = error.message || "Registration failed. Please try again.";
-      setFormError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setIsSubmitting(false);
+        localStorage.setItem('token', data.token);
+        toast.success(data.message + " Redirecting to Login Page" || "Registration successfull! Redirecting to Login Page.");
+        setTimeout(() => {
+          navigate("/auth/learner-login")
+        }, 3000)
+      
+      } catch (error: any) {
+        const errorMessage = error.message + " check Your internet connection" || "Registration failed. Please try again.";
+        setFormError(errorMessage);
+        toast.error(errorMessage);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -147,6 +123,9 @@ export const LearnerRegister = () => {
     if (!formData.location) newErrors.location = "Location is required";
     if (!formData.password) newErrors.password = "Password is required";
     if (!formData.password_confirmation) newErrors.password_confirmation = "Confirm password is required";
+    if (formData.password_confirmation && formData.password !== formData.password_confirmation) {
+      newErrors.password_confirmation = "Passwords do not match";
+    }
     
     setErrors(newErrors);
     return newErrors;

@@ -1,154 +1,173 @@
-// api/mockTutors.ts
+// api/tutorService.ts
 import { Tutor } from "../../types";
-import { SearchFilters } from "../../types";
 
-export const mockTutors: Tutor[] = [
-  {
-    id: "1",
-    name: "Sarah Johnson",
-    avatar: "https://i.pravatar.cc/150?img=11",
-    subject: "Python Programming",
-    price: 45,
-    rating: 4.8,
-    reviews: 128,
-    language: "English",
-    availability: ["Now 🚀", "Weekends 🏖️"],
-    type: "professional",
-    videoPreview: "https://youtu.be/M_z6shjaoNw?si=eO1QmNqF6v2ItqkZ",
-    location: "online",
-    specialties: ["Web Development", "Data Science"],
-  },
-  {
-    id: "2",
-    name: "Michael Chen",
-    avatar: "https://i.pravatar.cc/150?img=23",
-    subject: "Electrical Engineering",
-    price: 60,
-    rating: 4.9,
-    reviews: 245,
-    language: "Mandarin",
-    availability: ["Today 🌞", "Flexible 🔄"],
-    type: "professional",
-    location: "onsite",
-    specialties: ["Circuit Design", "Power Systems"],
-  },
-  {
-    id: "3",
-    name: "Emma Wilson",
-    avatar: "https://i.pravatar.cc/150?img=32",
-    subject: "Classical Piano",
-    price: 35,
-    rating: 4.7,
-    reviews: 89,
-    language: "French",
-    availability: ["Weekends 🏖️", "Flexible 🔄"],
-    type: "student",
-    location: "online",
-    specialties: ["Music Theory", "Improvisation"],
-  },
-  {
-    id: "4",
-    name: "Raj Patel",
-    avatar: "https://i.pravatar.cc/150?img=45",
-    subject: "Quantum Physics",
-    price: 55,
-    rating: 4.6,
-    reviews: 167,
-    language: "Hindi",
-    availability: ["Now 🚀", "Today 🌞"],
-    type: "professional",
-    location: "onsite",
-    specialties: ["Quantum Mechanics", "Relativity"],
-  },
-  {
-    id: "5",
-    name: "Lisa Rodriguez",
-    avatar: "https://i.pravatar.cc/150?img=57",
-    subject: "Machine Learning",
-    price: 65,
-    rating: 4.9,
-    reviews: 212,
-    language: "Spanish",
-    availability: ["Today 🌞", "Weekends 🏖️"],
-    type: "professional",
-    location: "online",
-    specialties: ["Neural Networks", "Deep Learning"],
-  },
-  // Add more tutors as needed...
-];
+const API_BASE = "https://rrn24.techchantier.site/tutor-finder/public/api";
 
-export const featuredSections = [
-  {
-    title: "🚀 Top Coding Tutors",
-    tutorIds: ["1", "5"],
-    description: "Most popular programming experts",
-  },
-  {
-    title: "🔬 Science & Engineering Stars",
-    tutorIds: ["2", "4"],
-    description: "Leading experts in technical fields",
-  },
-  {
-    title: "🎵 Creative Arts Mentors",
-    tutorIds: ["3"],
-    description: "Talented arts and music instructors",
-  },
-];
+// export const fetchTutors = async (filters: SearchFilters) => {
+//   try {
+//     const queryParams = new URLSearchParams({
+//       search: filters.searchTerm,
+//       category_id: filters.category?.id || "",
+//       available: filters.availability.includes("Now 🚀") ? "available" : "busy",
+//       include: "tutorProfile,categories,qualifications",
+//       min_rating: filters.minRating.toString(),
+//       price_min: filters.priceRange[0].toString(),
+//       price_max: filters.priceRange[1].toString(),
+//       location_type: filters.locationType,
+//       tutor_type: filters.tutorType,
+//     });
 
-export const filterTutors = (
-  tutors: Tutor[],
-  filters: SearchFilters
-): Tutor[] => {
-  const isDefaultFilters =
-    filters.searchTerm === "" &&
-    filters.locationType === "all" &&
-    filters.priceRange[0] === 0 &&
-    filters.priceRange[1] === 100 &&
-    filters.minRating === 4.0 &&
-    filters.availability.length === 0 &&
-    filters.tutorType === "all";
+//     const response = await fetch(`${import.meta.env.BASE_URL}/tutors?${queryParams}`, {
+//       headers: {
+//         "Accept": "application/json",
+//         "Content-Type": "application/json"
+//       }
+//     });
 
-  if (isDefaultFilters) return tutors; // Return all for featured sections
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! status: ${response.status}`);
+//     }
 
-  return tutors.filter((tutor) => {
-    // Search term matching
-    const matchesSearchTerm =
-      tutor.name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-      tutor.subject.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-      tutor.specialties.some((s) =>
-        s.toLowerCase().includes(filters.searchTerm.toLowerCase())
-      );
+//     const responseData = await response.json();
+//     localStorage.setItem('tutors', JSON.stringify(responseData.data));
+    
+//     // Transform API response to match Tutor type
+//     return responseData.data.map((apiTutor: any): Tutor => ({
+//       id: apiTutor.id.toString(),
+//       name: apiTutor.name,
+//       profile_image: apiTutor.profile_image || "https://i.pravatar.cc/150",
+//       subjects: apiTutor.categories?.map((cat: any) => cat.name) || ["General Tutoring"],
+//       price: apiTutor.tutorProfile?.hourly_rate || 0,
+//       rating: parseFloat(apiTutor.tutorProfile?.average_rating || "4.5"),
+//       reviews: apiTutor.tutorProfile?.review_count || 0,
+//       availability: apiTutor.available === "available" ? "available" : "busy",
+//       type: apiTutor.tutor_type || "professional",
+//       location: apiTutor.location === "Nairobi" ? "onsite" : "online",
+//       specialties: apiTutor.tutorProfile?.specializations?.split(",") || [],
+//       tutorProfile: {
+//         bio: apiTutor.tutorProfile?.bio || "",
+//         experience: apiTutor.tutorProfile?.years_experience || 0,
+//         qualifications: apiTutor.qualifications?.map((q: any) => q.title) || [],
+//         hourly_rate: 0,
+//         average_rating: 0,
+//         review_count: 0,
+//         languages: [],
+//         specializations: []
+//       },
+//       email: "",
+//       phone_number: "",
+//       whatsapp_number: "",
+//       user_type: "tutor"
+//     }));
+    
+//   } catch (error) {
+//     console.error("Error fetching tutors:", error);
+//     throw error;
+//   }
+// };
 
-    // Location filter
-    const matchesLocation =
-      filters.locationType === "all" || tutor.location === filters.locationType;
 
-    // Price range
-    const matchesPrice =
-      tutor.price >= filters.priceRange[0] &&
-      tutor.price <= filters.priceRange[1];
 
-    // Rating filter
-    const matchesRating = tutor.rating >= filters.minRating;
 
-    // Availability filter
-    const matchesAvailability =
-      filters.availability.length === 0 ||
-      filters.availability.some((avail: string) =>
-        tutor.availability.includes(avail)
-      );
 
-    // Tutor type filter
-    const matchesTutorType =
-      filters.tutorType === "all" || tutor.type === filters.tutorType;
+export const fetchTutors = async (filters: any): Promise<Tutor[]> => {
+  try {
+    const params: Record<string, string> = {
+      include: "tutorProfile,categories",
+      min_rating: filters.minRating.toString(),
+      price_min: filters.priceRange[0].toString(),
+      price_max: filters.priceRange[1].toString()
+    };
 
-    return (
-      matchesSearchTerm &&
-      matchesLocation &&
-      matchesPrice &&
-      matchesRating &&
-      matchesAvailability &&
-      matchesTutorType
-    );
-  });
+        // Only add search parameter if it's valid
+        if (filters.searchTerm && filters.searchTerm.length >= 3) {
+          params.search = filters.searchTerm;
+        }
+    
+        // Only add category_id if it exists
+        if (filters.category?.id) {
+          params.category_id = filters.category.id;
+        }
+    
+        const queryParams = new URLSearchParams(params);
+    const response = await fetch(`${API_BASE}/tutors?${queryParams}`, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    localStorage.setItem('tutors', JSON.stringify(responseData.data));
+    
+    return responseData.data.map((apiTutor: any): Tutor => ({
+      id: apiTutor.id.toString(),
+      name: apiTutor.name,
+      profile_image: apiTutor.profile_image || "https://i.pravatar.cc/150",
+      categories: apiTutor.categories?.map((cat: any) => ({
+        id: cat.id.toString(),
+        name: cat.name,
+        description: cat.description
+      })) || [],
+      price: apiTutor.tutorProfile?.hourly_rate || 45,
+      rating: parseFloat(apiTutor.tutorProfile?.average_rating || "4.5"),
+      reviews: apiTutor.tutorProfile?.review_count || 0,
+      location: apiTutor.location || "Online",
+      email: apiTutor.email || "",
+      phone_number: apiTutor.phone_number || "",
+      whatsapp_number: apiTutor.whatsapp_number || "",
+      user_type: "tutor",
+      availability: apiTutor.available === "available" ? "available" : "busy",
+      specialties: apiTutor.tutorProfile?.specializations?.split(",") || [],
+      type: apiTutor.tutor_type || "professional",
+      subjects: apiTutor.categories?.map((cat: any) => cat.name) || [],
+      tutorProfile: {
+        bio: apiTutor.tutorProfile?.bio || "",
+        hourly_rate: apiTutor.tutorProfile?.hourly_rate || 0,
+        average_rating: parseFloat(apiTutor.tutorProfile?.average_rating || "4.5"),
+        review_count: apiTutor.tutorProfile?.review_count || 0,
+        languages: apiTutor.tutorProfile?.languages || [],
+        experience: apiTutor.tutorProfile?.years_experience || 0,
+        specializations: apiTutor.tutorProfile?.specializations?.split(",") || [],
+        qualifications: apiTutor.qualifications?.map((q: any) => q.title) || []
+      }
+    }));
+    
+  } catch (error) {
+    console.error("Error fetching tutors:", error);
+    throw error;
+  }
+};
+
+export const fetchCategories = async () => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_Base_URL}/categories`, {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    console.log('categories: ', responseData)
+    localStorage.setItem('categories', JSON.stringify(responseData.data));
+    return responseData.data.map((cat: any) => ({
+      id: cat.id.toString(),
+      name: cat.name,
+      description: cat.description
+    }));
+    
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    throw error;
+  }
 };

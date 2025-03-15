@@ -7,7 +7,6 @@ import SocialAuthButton from '../shared/socialLoginButton';
 import { toast } from 'react-toastify';
 
 
-
 export const LearnerLogin = () => {
   const navigate = useNavigate(); 
 
@@ -56,8 +55,8 @@ export const LearnerLogin = () => {
 
       } catch (error: any) {
         // dispatch(authFailure(error.message));
-        setFormError(error.message || "Login Failed, please try again");
-        toast.error(error.message || "Login Failed, Please try again");
+        setFormError(error.message + " Check your internet Connection" || "Login Failed, please try again");
+        toast.error(error.message + " Check your internet Connection" || "Login Failed, Please try again");
       } finally {
         setIsSubmitting(false);
       }

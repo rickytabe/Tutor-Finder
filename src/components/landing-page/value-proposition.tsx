@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const ValueGrid = () => {
     const features = [
       {
@@ -52,9 +54,9 @@ const ValueGrid = () => {
               <p className="text-gray-400 mb-6 text-xl">
                 Ready to start your learning journey?
               </p>
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors duration-300">
+              <Link to="/learner" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors duration-300">
                 Find Your Perfect Tutor Now
-              </button>
+              </Link>
             </div>
           </div>
         </div>

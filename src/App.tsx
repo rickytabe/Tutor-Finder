@@ -3,20 +3,20 @@ import LandingPage from "./components/landing-page/landing-page";
 import { LearnerRegister } from "./components/Auth/learners/leanerRegistration";
 import TutorRegister from "./components/Auth/tutors/tutorRegistration";
 import { LearnerLogin } from "./components/Auth/learners/learnerLogin";
-import { TutorLogin } from "./components/Auth/tutors/tutorLogin";
+import  TutorLogin  from "./components/Auth/tutors/tutorLogin";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import LearnerHomePage from "./components/Main/learner-pages/Learner_Dashboard/homePage";
-// import TutorHomePage from "./components/Main/tutor-pages/homePage";
-import HomePage2 from "./components/Main/learner-pages/HomePage/HomePage";
-// import DashboardLayout from './components/Main/learner-pages/Learner_Dashboard/DashboardLayout';
+import LearnerHomePage from "./components/Main/learner-pages/HomePage/HomePage";
 import LearningOverview from "./components/Main/learner-pages/Learner_Dashboard/LearningOverview";
-import SessionManagement from "./components/Main/learner-pages/Learner_Dashboard/SessionManagement";
 import FinancialHub from "./components/Main/learner-pages/Learner_Dashboard/FinancialHub";
 import ProfileNexus from "./components/Main/learner-pages/Learner_Dashboard/ProfileNexus";
 import Dashboard from "./components/Main/learner-pages/Learner_Dashboard/Dashboard";
 import Community from "./components/Main/learner-pages/Community/community";
 import { Analytics } from "@vercel/analytics/react"
+import Gigs from "./components/Main/learner-pages/Learner_Dashboard/Gigs/gigIndex";
+import SearchPage from "./components/Main/learner-pages/HomePage/components/SearchPage";
+import TutorHomePage from "./components/Main/tutor-pages/homePage";
+
 
 
 
@@ -34,13 +34,15 @@ function App() {
             <Route path="/auth/tutor-registration" element={<TutorRegister />} />
             <Route path="/auth/learner-login" element={<LearnerLogin />} />
             <Route path="/auth/tutor-login" element={<TutorLogin />} />
-            {/* <Route path="/tutor-homePage" element={<TutorHomePage />} /> */}
-            <Route path="/learnerHomePage" element={<HomePage2 />} />
+            <Route path="/tutorHomePage" element={<TutorHomePage />} />
+          <Route path="/learnerHomePage" element={<LearnerHomePage />} />
+          <Route path="/search" element={<SearchPage />} />
+
             <Route path="/community" element={<Community />} />
             <Route path="/dashboard" element={<Dashboard />}>
               <Route index element={<LearningOverview />} />
               <Route path="learning" element={<LearningOverview />} />
-              <Route path="sessions" element={<SessionManagement />} />
+              <Route path="sessions" element={<Gigs />} />
               <Route path="financial" element={<FinancialHub />} />
               <Route path="profile" element={<ProfileNexus />} />
             </Route>

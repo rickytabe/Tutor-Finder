@@ -1,15 +1,17 @@
+import { Link } from "react-router-dom";
+
 const TutorShowcase = () => {
   const tutors = [
     {
-      name: "Dr. Sarah Johnson",
+      name: "Dr. Johnson",
       expertise: "Machine Learning & Python",
       experience: "8+ years",
       rating: 4.98,
       students: 1200,
-      price: 85,
+      price: 5000,
       priceUnit: "/hr",
       available: true,
-      image: "",
+      image: "https://i.pinimg.com/474x/97/b7/57/97b7577efb3ceba36fd9934ff3958e97.jpg",
       badges: ["Top Rated", "AI Expert"],
     },
     {
@@ -18,10 +20,10 @@ const TutorShowcase = () => {
       experience: "5+ years",
       rating: 4.95,
       students: 850,
-      price: 65,
+      price: 3000,
       priceUnit: "/hr",
       available: false,
-      image: "👨🏫",
+      image: "https://i.pinimg.com/236x/70/51/fe/7051fe596b79e49070d5d0ecb606f411.jpg",
       badges: ["Exam Specialist"],
     },
     {
@@ -30,10 +32,10 @@ const TutorShowcase = () => {
       experience: "6+ years",
       rating: 4.97,
       students: 980,
-      price: 75,
+      price: 2000,
       priceUnit: "/hr",
       available: true,
-      image: "👩💻",
+      image: "https://i.pinimg.com/736x/d4/a2/97/d4a2970f5e27a8303b8a860bb5bd422f.jpg",
       badges: ["Career Coach"],
     },
   ];
@@ -69,7 +71,7 @@ const TutorShowcase = () => {
 
               <div className="flex items-center mb-6 mt-10 md:mt-0">
                 <div className="w-20 h-20 rounded-full bg-blue-900/50 flex items-center justify-center text-4xl mr-4">
-                  {tutor.image}
+                  <img src={`${tutor.image}`} className="w-full h-full object-cover rounded-full"/>
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-white">
@@ -101,7 +103,7 @@ const TutorShowcase = () => {
                 <div>
                   <p className="text-gray-400 text-sm">Starting from</p>
                   <p className="text-2xl font-bold text-white">
-                    ${tutor.price}
+                    CFA {tutor.price}
                     <span className="text-gray-400 text-lg ml-1">
                       {tutor.priceUnit}
                     </span>
@@ -123,9 +125,9 @@ const TutorShowcase = () => {
         </div>
 
         <div className="mt-12 text-center">
-          <button className="px-8 py-3 border-2 border-blue-600 text-blue-400 rounded-lg hover:bg-blue-600/10 transition-colors">
+          <Link to='/learnerHomePage' className="px-8 py-3 border-2 border-blue-600 text-blue-400 rounded-lg hover:bg-blue-600/10 transition-colors">
             Browse All Tutors →
-          </button>
+          </Link>
         </div>
       </div>
     </section>

@@ -1,14 +1,15 @@
-// src/auth/tutors/TutorLogin.tsx
+// src/auth/learners/LearnerLogin.tsx
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import  AuthWrapper  from '../shared/authWrapper';
+import AuthWrapper from '../shared/authWrapper'; 
 import { validateEmail } from '../shared/authUtils';
-import { useAuth } from '../shared/firebaseAuthUtils';
+import SocialAuthButton from '../shared/socialLoginButton';
 import { toast } from 'react-toastify';
 
-export const TutorLogin = () => {
-  const { signIn } = useAuth(); // Get the signIn function
-  const navigate = useNavigate(); // Initialize useNavigate
+
+
+const TutorLogin = () => {
+  const navigate = useNavigate(); 
 
   const [formData, setFormData] = useState({
     email: '',
@@ -18,43 +19,57 @@ export const TutorLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  
+  //I will need to Implement Trooteling later
+  const handleSubmit = async (e: React.FormEvent) => {  // Make handleSubmit async
     e.preventDefault();
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length === 0) {
       setIsSubmitting(true);
-       try {
-              await signIn(formData.email, formData.password); // Call signIn function
-              toast.success('Login successful!');
-              setTimeout(()=>{
-                navigate("/tutor-homePage")
-              })  // Redirect after successful login
-            } catch (error: any) {
-              console.error('Login error:', error);
-              // Handle errors (e.g., display error message)
-              if (error.code === "auth/user-not-found") {
-                toast.error("User not found. Please check your email or sign up.");
-                setFormError('User not found. Please check your email or sign up')
-              } else if (error.code === "auth/invalid-credential") {
-                toast.error("Incorrect email or password. Please try again.");
-                setFormError('Incorrect email or password. Please try again.');
-              } else {
-                toast.error("Sign in failed. Please try again later (check your internet connectivity).");
-                setFormError('Sign in failed. Please try again later (check your interner connectivity).')
-              }
-            } finally {
-              setIsSubmitting(false);
-            }  
+      try {
+        const formPayload = new FormData();
+        formPayload.append('email', formData.email);
+        formPayload.append('password', formData.password);
+  
+      const response = await fetch(`${import.meta.env.VITE_Base_URL}/login`, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: formPayload,
+      });
+        
+      const data = await response.json()
+      const userData = data['authenticated user']
+     // Store token and user data
+      localStorage.setItem('token', data.token); 
+      localStorage.setItem('user', JSON.stringify(userData));
+      console.log('user: ', data)
+        
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+        toast.success('Login successful!');
+
+        setTimeout(()=>{
+          navigate("/tutorHomePage")
+        }, 1000)
+
+
+      } catch (error: any) {
+        setFormError(error.message + " Check your internet Connection" || "Login Failed, please try again");
+        toast.error(error.message + " Check your internet Connection" || "Login Failed, Please try again");
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
+
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!validateEmail(formData.email)) {
       newErrors.email = 'Invalid email address';
     }
-    if (formData.password.length < 8) {
+    if (formData.password.length < 6) {
       newErrors.password = 'Password must be at least 8 characters';
     }
     setErrors(newErrors);
@@ -63,9 +78,9 @@ export const TutorLogin = () => {
 
   return (
     <AuthWrapper
+      isTutor={true}
       title="Welcome Back, Tutor"
-      subtitle="Sign in to manage your tutoring sessions"
-      isTutor
+      subtitle="Sign in to continue inspiring the next generation"
     >
       <form onSubmit={handleSubmit} className="mt-8 space-y-6">
         {/* Email Input */}
@@ -136,20 +151,23 @@ export const TutorLogin = () => {
         >
           {isSubmitting ? 'Signing In...' : 'Sign In'}
         </button>
+
+        {/* Social Login */}
+        <SocialAuthButton/>
       </form>
 
       {/* Sign Up Prompt */}
       <div className="mt-8 text-center text-sm text-gray-600">
-        Not registered as a tutor?{' '}
+        Don't have an account?{' '}
         <Link
-          to="/auth/tutor-registration"
+          to="/auth/learner-registration"
           className="text-teal-600 font-semibold hover:text-teal-700"
         >
-          Apply now
+          Sign up
         </Link>
       </div>
     </AuthWrapper>
   );
 };
 
-
+export default TutorLogin;

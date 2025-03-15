@@ -5,8 +5,10 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Modal from 'react-modal';
 import Icon from '../HomePage/components/icons';
+import { getGigs } from './Gigs/services/gigService';
 
-Modal.setAppElement('#root');
+
+// Modal.setAppElement('#root');
 
 // Type Definitions(this is for a gig object)
 type Gig = {
@@ -123,7 +125,25 @@ const SessionManagement: React.FC = () => {
     setIsGigModalOpen(false);
     reset();
   };
+  // Get gigs for logged-in user (learner_id from auth system)
+const loadUserGigs = async (learnerId: number) => {
+  try {
+    const result = await getGigs({
+      learner_id: learnerId,
+      status: 'open',
+      per_page: 10,
+      include: 'category'
+    });
+    
+    console.log('User gigs:', result.data);
+    console.log('Pagination info:', result.meta);
+  } catch (error) {
+    console.error('Error loading gigs:', error);
+  }
+};
 
+  loadUserGigs(32);
+  
   const getStatusBadge = (status: Gig['status'] | Session['status']) => {
     const statusStyles = {
       'open': 'bg-green-100 text-green-800',

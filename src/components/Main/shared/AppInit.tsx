@@ -21,8 +21,10 @@ export const AppInit = () => {
   
           const data = await response.json();
           
-          if (!response.ok) throw new Error(data.message || "Session expired");
-          
+          if (!response.ok) {
+            throw new Error(data.message || "Session expired");
+            
+          }
           // Store in Redux and localStorage
           localStorage.setItem('token', data.token || token);
           dispatch(loginSuccess(data.user));

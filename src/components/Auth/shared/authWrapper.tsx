@@ -1,7 +1,7 @@
 // src/auth/shared/AuthWrapper.tsx
 import { ReactNode, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Squares from './square.jsx';
+import Squares from '../../styled-components/Squares.jsx';
 
 type AuthWrapperProps = {
   children: ReactNode;

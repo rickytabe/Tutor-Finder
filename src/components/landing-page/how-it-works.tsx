@@ -35,7 +35,7 @@ const HowItWorks = () => {
             {/* Learner Section */}
             <div className="bg-gray-800 rounded-2xl p-8">
               <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                <span className="bg-blue-600 p-3 rounded-lg">👨🎓</span>
+                <img src="https://i.pinimg.com/236x/b2/da/f9/b2daf9019c4b08fa3a90c7d28a08a059.jpg" className="border-2 border-gray-200 rounded-md" />
                 For Learners
               </h3>
               <div className="space-y-6">
@@ -61,7 +61,7 @@ const HowItWorks = () => {
             {/* Tutor Section */}
             <div className="bg-gray-800 rounded-2xl p-8">
               <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                <span className="bg-purple-600 p-3 rounded-lg">👩🏫</span>
+               <img src="https://i.pinimg.com/236x/08/cb/2d/08cb2d6f9ba35b4340b2988786ea1ba6.jpg" className="border-2 border-gray-200 rounded-md h-80 w-80" />
                 For Tutors
               </h3>
               <div className="space-y-6">

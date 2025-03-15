@@ -5,7 +5,7 @@ const PricingTransparency = () => {
     const plans = [
       {
         title: "Pay-As-You-Learn",
-        price: "25",
+        price: "1000",
         duration: "hour",
         features: [
           "Flexible session booking",
@@ -19,7 +19,7 @@ const PricingTransparency = () => {
       },
       {
         title: "Learning Package",
-        price: "199",
+        price: "5000",
         duration: "5 hours",
         features: [
           "Save 20% on hourly rate",
@@ -33,7 +33,7 @@ const PricingTransparency = () => {
       },
       {
         title: "Premium Membership",
-        price: "99",
+        price: "10000",
         duration: "month",
         features: [
           "Unlimited session hours",
@@ -112,7 +112,7 @@ const PricingTransparency = () => {
                 
                 <div className="mb-6">
                   <span className="text-4xl font-bold text-white">
-                    ${plan.price}
+                    CFA {plan.price}
                   </span>
                   <span className="text-gray-400 ml-2">
                     / {plan.duration}

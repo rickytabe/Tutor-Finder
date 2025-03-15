@@ -98,9 +98,9 @@ const NavBar: React.FC<NavBarProps> = ({ scrollToSection, activeSection }) => {
         {/* Main nav bar */}
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           {/* Logo */}
-          <div className={logoStyles}>
+          <a href="/" className={logoStyles}>
             Tutor <span className="text-blue-600">Finder</span>
-          </div>
+          </a>
 
           {/* Desktop Navigation */}
           <div className={menuContainerStyles}>

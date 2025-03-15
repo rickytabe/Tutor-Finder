@@ -1,4 +1,4 @@
-// components/Main/learner-pages/Learner_Dashboard/DashboardLayout.tsx
+
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import Icon from '../HomePage/components/icons';
@@ -8,7 +8,7 @@ interface Children {
 }
 
 const DashboardLayout: React.FC<Children> = ({ children }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for dropdown menu
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
 
   const tabs = [
     { id: 'learning', icon: 'book', label: 'Learning Overview' },
@@ -18,9 +18,9 @@ const DashboardLayout: React.FC<Children> = ({ children }) => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-blue-200">
       {/* Sidebar for Desktop */}
-      <aside className="hidden md:block w-64 bg-white shadow-lg fixed h-full">
+      <aside className="hidden md:block w-64 bg-white shadow-lg shadow-black z-10 fixed h-full">
         <div className="p-4">
           <h2 className="text-xl font-bold text-blue-600 mb-6">Learner Dashboard</h2>
           <nav>
@@ -45,7 +45,7 @@ const DashboardLayout: React.FC<Children> = ({ children }) => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 md:ml-64  bg-gray-500">
+      <main className="flex-1 md:ml-64  bg-white pt-10">
         <div className="max-w-full mx-auto ">
           {/* Mobile Header with Dropdown */}
           <div className="md:hidden mb-6">
@@ -74,7 +74,7 @@ const DashboardLayout: React.FC<Children> = ({ children }) => {
 
                 {/* Dropdown Menu */}
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50">
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-40">
                     <nav>
                       {tabs.map((tab) => (
                         <NavLink
@@ -108,7 +108,7 @@ const DashboardLayout: React.FC<Children> = ({ children }) => {
       {/* Overlay for Dropdown (Mobile Only) */}
       {isDropdownOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0 bg-black/50 z-35 md:hidden"
           onClick={() => setIsDropdownOpen(false)}
         ></div>
       )}

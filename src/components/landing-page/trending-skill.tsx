@@ -16,20 +16,32 @@ const getDemandColor = (level: number) => {
 };
 
 const TrendingSkills = () => {
-  const skills: Skill[] = [
-    { name: "AI & Machine Learning", demand: "High", level: 4 },
-    { name: "Web Development", demand: "Very High", level: 5 },
-    { name: "Data Science", demand: "Peak", level: 5 },
-    { name: "Mobile Development", demand: "High", level: 4 },
-    { name: "Cybersecurity", demand: "Growing", level: 3 },
-    { name: "Cloud Computing", demand: "High", level: 4 },
-    { name: "UI/UX Design", demand: "Very High", level: 5 },
-    { name: "DevOps", demand: "High", level: 4 },
-    { name: "Blockchain", demand: "Emerging", level: 2 },
-    { name: "Game Development", demand: "Stable", level: 3 },
-    { name: "AR/VR", demand: "Growing", level: 3 },
-    { name: "Quantum Computing", demand: "Emerging", level: 2 },
-  ];
+ const skills: Skill[] = [
+  { name: "AI & Machine Learning", demand: "High", level: 4 },
+  { name: "Web Development", demand: "Very High", level: 5 },
+  { name: "Data Science", demand: "Peak", level: 5 },
+  { name: "Mobile Development", demand: "High", level: 4 },
+  { name: "Cybersecurity", demand: "Growing", level: 3 },
+  { name: "Cloud Computing", demand: "High", level: 4 },
+  { name: "UI/UX Design", demand: "Very High", level: 5 },
+  { name: "DevOps", demand: "High", level: 4 },
+  { name: "Blockchain", demand: "Emerging", level: 2 },
+  { name: "Game Development", demand: "Stable", level: 3 },
+  { name: "AR/VR", demand: "Growing", level: 3 },
+  { name: "Quantum Computing", demand: "Emerging", level: 2 },
+  { name: "Digital Marketing", demand: "High", level: 4 },
+  { name: "Graphic Design", demand: "Very High", level: 5 },
+  { name: "Project Management", demand: "Growing", level: 3 },
+  { name: "Financial Analysis", demand: "High", level: 4 },
+  { name: "Content Writing", demand: "Very High", level: 5 },
+  { name: "Sales & Business Development", demand: "High", level: 4 },
+  { name: "Customer Service", demand: "Stable", level: 3 },
+  { name: "Human Resources", demand: "Growing", level: 3 },
+  { name: "Healthcare & Nursing", demand: "Very High", level: 5 },
+  { name: "Education & Training", demand: "High", level: 4 },
+  { name: "Legal Services", demand: "Stable", level: 3 },
+  { name: "Supply Chain Management", demand: "Growing", level: 3 },
+];
 
   const duplicatedSkills = useMemo(() => [...skills, ...skills], [skills]);
 
@@ -80,7 +92,7 @@ const TrendingSkills = () => {
   return (
     <section className="py-16 bg-gray-900">
       <style>{animationStyles}</style>
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 ">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
             Trending Skills This Month

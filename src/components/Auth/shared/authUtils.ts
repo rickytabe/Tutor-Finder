@@ -23,22 +23,6 @@ export const validateEmail = (email: string): boolean => {
       return ""; // No errors
   };
   
-  export const handleFirebaseError = (errorCode: string): string => {
-    switch (errorCode) {
-      case 'auth/email-already-in-use':
-        return 'Email is already registered';
-      case 'auth/invalid-email':
-        return 'Invalid email address';
-      case 'auth/weak-password':
-        return 'Password is too weak';
-      case 'auth/user-not-found':
-        return 'User not found';
-      case 'auth/wrong-password':
-        return 'Incorrect password';
-      default:
-        return 'An error occurred. Please try again.';
-    }
-  };
   
   export const formatCurrency = (value: string): string => {
     return parseFloat(value).toLocaleString('en-US', {
@@ -51,7 +35,7 @@ export const validateEmail = (email: string): boolean => {
   
 export const getDisplayName = (user: User | Learner | Tutor | null): string => {
   if (!user) {  // Handle the case where user is null (e.g., not logged in)
-    return ""; // Or any other default value you want to display
+    return ""; 
   }
 
   return user.firstName && user.lastName

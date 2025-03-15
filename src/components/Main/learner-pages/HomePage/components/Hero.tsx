@@ -1,13 +1,9 @@
 // components/Hero.tsx
-import React from "react";
-import { SearchFilters } from "../../types";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Icon from "./icons";
 import Squares from '../../../../styled-components/Squares.jsx'
 
-interface HeroProps {
-  filters: SearchFilters;
-  onSearch: (newFilters: SearchFilters) => void;
-}
 const SquaresComponent = Squares as React.FC<{
   speed?: number;
   squareSize?: number;
@@ -16,18 +12,24 @@ const SquaresComponent = Squares as React.FC<{
   hoverFillColor?: string;
 }>;
 
-const Hero: React.FC<HeroProps> = ({ filters, onSearch }) => {
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onSearch({ ...filters, searchTerm: e.target.value });
-  };
+const Hero: React.FC = () => {
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+  const popularSearches = ["Mathematics", "Physics", "English", "Programming"];
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSearch(filters);
+    if (searchTerm.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
+    }
+  };
+
+  const handlePopularSearch = (subject: string) => {
+    navigate(`/search?q=${encodeURIComponent(subject)}`);
   };
 
   return (
-    <div className="relative bg-black shadow-xl pt-40 flex items-center  justify-center">
+    <div className="relative bg-black shadow-xl pt-32 pb-24 flex items-center justify-center">
       <div className="absolute inset-0 z-0">
         <SquaresComponent
           speed={0.15}
@@ -38,47 +40,44 @@ const Hero: React.FC<HeroProps> = ({ filters, onSearch }) => {
         />
       </div>
 
-      <div className="container mx-auto px-4 py-6 z-10">
-        <div className="max-w-3xl mx-auto mb-12">
-          <h2 className="text-4xl font-bold text-white mb-6 text-center">
-            Learn with expert tutors
-          </h2>
-          <form onSubmit={handleSearchSubmit} className="relative">
-            <div className="bg-white rounded-lg shadow-xl flex items-center">
+      <div className="container mx-auto px-4 z-10">
+        <div className="max-w-3xl mx-auto text-center">
+          <h1
+            className="text-4xl md:text-6xl font-bold mt-20 mb-6 leading-tight
+            bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent
+            drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+          >
+            Transform Your Skills
+            <br />
+            <span className="text-white/90">With Expert Tutors</span>
+          </h1>
+          
+          <form onSubmit={handleSearchSubmit} className="mb-8">
+            <div className="flex flex-col md:flex-row gap-4 max-w-2xl mx-auto">
               <input
                 type="text"
-                placeholder="🔍 Search tutors by name, subject, or specialty..."
-                className="flex-1 p-4 text-lg focus:outline-none rounded-l-lg"
-                value={filters.searchTerm}
-                onChange={handleSearchChange}
+                placeholder="Search subjects, topics, or tutors..."
+                className="flex-1 px-6 py-4 text-lg rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-300"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <div className="flex items-center pr-2">
-                {filters.searchTerm && (
-                  <button
-                    type="button"
-                    onClick={() => onSearch({ ...filters, searchTerm: "" })}
-                    className="text-gray-500 hover:text-blue-600 p-2"
-                  >
-                    ✕
-                  </button>
-                )}
-                <button
-                  type="submit"
-                  className="hidden  bg-blue-600 text-white px-8 py-4 md:flex items-center  space-y-2 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  <Icon name="search" size={20} className="text-white " />
-                  Search
-                </button>
-              </div>
+              <button
+                type="submit"
+                className="px-8 py-4 bg-white text-teal-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+              >
+                <Icon name="search" size={20} />
+                Search
+              </button>
             </div>
           </form>
-          <div className="flex justify-center space-x-4 mt-4">
-            <span className="text-white text-sm">Popular: </span>
-            {["Math", "Programming", "English", "Music"].map((subject) => (
+
+          <div className="flex flex-wrap justify-center gap-3">
+            <span className="text-white/90 text-sm">Popular searches:</span>
+            {popularSearches.map((subject) => (
               <button
                 key={subject}
-                className="text-white text-sm bg-white/10 px-3 py-1 rounded-full hover:bg-white/20 transition-colors"
-                onClick={() => onSearch({ ...filters, searchTerm: subject })}
+                onClick={() => handlePopularSearch(subject)}
+                className="px-4 py-2 bg-white/10 text-white rounded-full hover:bg-white/20 transition-colors text-sm"
               >
                 {subject}
               </button>
