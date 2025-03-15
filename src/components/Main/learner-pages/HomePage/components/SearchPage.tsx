@@ -9,7 +9,7 @@ const SearchPage = () => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('q') || '';
   const { filteredTutors } = useSearchTutors(searchQuery);
-  const [tutors, setTutors] = useState<Tutor[]>([]);
+  const [_tutors, setTutors] = useState<Tutor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -87,6 +87,3 @@ const SearchPage = () => {
 
  export default SearchPage;
 
-function setTutors(tutorsData: Tutor[]) {
-  throw new Error('Function not implemented.');
-}

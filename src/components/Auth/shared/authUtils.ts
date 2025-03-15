@@ -1,4 +1,4 @@
-import { User, Learner, Tutor } from "../../../types/users";
+
 
 // src/auth/shared/authUtils.ts
 export const validateEmail = (email: string): boolean => {
@@ -31,19 +31,5 @@ export const validateEmail = (email: string): boolean => {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     });
-};
-  
-export const getDisplayName = (user: User | Learner | Tutor | null): string => {
-  if (!user) {  // Handle the case where user is null (e.g., not logged in)
-    return ""; 
-  }
-
-  return user.firstName && user.lastName
-    ? `${user.firstName} ${user.lastName}`
-    : user.firstName
-    ? user.firstName
-    : user.lastName
-    ? user.lastName
-    : "";  // Return empty string if both first and last names are null
 };
 
