@@ -1,6 +1,6 @@
 import React from "react";
 import TutorCard from "./TutorCard";
-import { FeaturedSection as FeaturedSectionType } from "../../types";
+import { FeaturedSection as FeaturedSectionType } from "../../../shared/types";
 
 interface FeaturedSectionProps {
   section: FeaturedSectionType;

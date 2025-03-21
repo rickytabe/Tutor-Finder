@@ -42,8 +42,8 @@ const NavBar: React.FC<NavBarProps> = () => {
   // Check auth status and load tutor data
   useEffect(() => {
     const checkAuth = () => {
-      const token = localStorage.getItem("token");
-      const tutorData = localStorage.getItem("user");
+      const token = localStorage.getItem("Tutortoken");
+      const tutorData = localStorage.getItem("tutor");
 
       setIsAuthenticated(!!token);
       setTutor(tutorData ? JSON.parse(tutorData) : null);
@@ -77,8 +77,8 @@ const NavBar: React.FC<NavBarProps> = () => {
 
   // Handle logout
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    localStorage.removeItem("Tutortoken");
+    localStorage.removeItem("tutor");
     setIsAuthenticated(false);
     setTutor(null);
     navigate("/");
@@ -97,17 +97,17 @@ const NavBar: React.FC<NavBarProps> = () => {
 
   const mainLinks = [
     {
-      path: "/learnerHomePage",
+      path: "/tutorHomePage",
       name: "Home",
       icon: <FaHome className="w-5 h-5" />,
     },
     {
-      path: "/dashboard",
+      path: "/tutorDashboard",
       name: "Dashboard",
       icon: <FaThLarge className="w-5 h-5" />,
     },
     {
-      path: "/lcommunity",
+      path: "/tcommunity",
       name: "Community",
       icon: <FaUsers className="w-5 h-5" />,
     },
@@ -158,21 +158,21 @@ const NavBar: React.FC<NavBarProps> = () => {
                       {tutor?.name ? getInitials(tutor.name) : '?'}
                     </div>
                   )}
-                  <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full"></div>
                 </div>
+                              
               </>
             ) : (
               <div className="hidden md:block">
                 <div className="flex items-center gap-4 col-span-2">
                   <NavLink
-                    to="/auth/learner-login"
+                    to="/auth/tutor-login"
                     className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/10 bg-green-500 transition-all"
                   >
                     <FaSignInAlt className="w-5 h-5" />
                     <span className="text-sm font-medium">Login</span>
                   </NavLink>
                   <NavLink
-                    to="/auth/learner-registration"
+                    to="/auth/tutor-registration"
                     className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/10 bg-red-500 transition-all"
                   >
                     <FaUserPlus className="w-5 h-5" />
@@ -260,12 +260,12 @@ const NavBar: React.FC<NavBarProps> = () => {
           {isAuthenticated ? (
             <div className="pt-8 border-t border-blue-400">
               <div className="flex items-center gap-3 text-white p-2">
-                <div className="relative border-4 rounded-3xl border-blue-700">
+               <div className="relative border-4 rounded-3xl border-blue-700">
                   {tutor?.profile_image ? (
                     <img 
                       src={tutor.profile_image} 
                       alt="Profile" 
-                      className="w-10 h-10 rounded-full object-cover"
+                      className="w-9 h-9 rounded-full object-cover"
                     />
                   ) : (
                     <div className="w-9 h-9 rounded-full bg-blue-400 flex items-center justify-center text-white cursor-pointer hover:bg-blue-500 transition-colors">
@@ -277,7 +277,7 @@ const NavBar: React.FC<NavBarProps> = () => {
                   <p className="font-medium">
                     {tutor?.name || "Tutor Account"}
                   </p>
-                  <p className="text-sm text-blue-100">Learner Account</p>
+                  <p className="text-sm text-blue-100">Tutor Account</p>
                 </div>
               </div>
               <button
@@ -291,7 +291,7 @@ const NavBar: React.FC<NavBarProps> = () => {
           ) : (
             <div className="pt-8 border-t border-blue-400 space-y-4">
               <NavLink
-                to="/auth/learner-login"
+                to="/auth/tutor-login"
                 onClick={toggleMenu}
                 className={`${navLinkStyles} text-lg text-white`}
               >
@@ -299,7 +299,7 @@ const NavBar: React.FC<NavBarProps> = () => {
                 Login
               </NavLink>
               <NavLink
-                to="/auth/learner-registration"
+                to="/auth/tutor-registration"
                 onClick={toggleMenu}
                 className={`${navLinkStyles} text-lg text-white`}
               >

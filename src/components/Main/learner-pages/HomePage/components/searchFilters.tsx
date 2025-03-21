@@ -1,6 +1,6 @@
 // components/SearchFilters.tsx
 import React, { useState } from "react";
-import { SearchFilters } from "../../types";
+import { SearchFilters } from "../../../shared/types";
 import Icon from "./icons";
 
 interface SearchFiltersProps {

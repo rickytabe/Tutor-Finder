@@ -86,7 +86,7 @@ export const LearnerRegister = () => {
         const response = await fetch(`${import.meta.env.VITE_Base_URL}/signup`, {
           method: 'POST',
           headers: {
-            'Accept': 'application/json'
+            'accept': 'application/json'
           },
           body: formPayload,
         });
@@ -104,7 +104,7 @@ export const LearnerRegister = () => {
         }, 3000)
       
       } catch (error: any) {
-        const errorMessage = error.message + " check Your internet connection" || "Registration failed. Please try again.";
+        const errorMessage = error.message || "Registration failed. Please try again.";
         setFormError(errorMessage);
         toast.error(errorMessage);
       } finally {
@@ -122,6 +122,7 @@ export const LearnerRegister = () => {
     if (!formData.whatsapp_number) newErrors.whatsapp_number = "Whatsapp number is required";
     if (!formData.location) newErrors.location = "Location is required";
     if (!formData.password) newErrors.password = "Password is required";
+    if (formData.password.length < 8) newErrors.password = "Password must be at least 8 characters";  
     if (!formData.password_confirmation) newErrors.password_confirmation = "Confirm password is required";
     if (formData.password_confirmation && formData.password !== formData.password_confirmation) {
       newErrors.password_confirmation = "Passwords do not match";

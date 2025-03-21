@@ -1,92 +1,132 @@
+import { motion } from "framer-motion";
+import { FaSearch, FaCalendarAlt, FaVideo, FaStar, FaRocket } from "react-icons/fa";
+import { FiArrowRight } from "react-icons/fi";
+
 const HowItWorks = () => {
-    const learnerSteps = [
-      { icon: "🔍", title: "Search for Tutors", 
-        desc: "Filter by subject, location, and availability using our advanced search" },
-      { icon: "📊", title: "Compare Profiles", 
-        desc: "Review qualifications, ratings, and teaching styles" },
-      { icon: "📅", title: "Book Sessions", 
-        desc: "Schedule directly through our calendar system" },
-      { icon: "🚀", title: "Start Learning", 
-        desc: "Join virtual sessions and track your progress" }
-    ];
-  
-    const tutorSteps = [
-      { icon: "📝", title: "Create Profile", 
-        desc: "Showcase your expertise, availability, and teaching approach" },
-      { icon: "🤝", title: "Get Matched", 
-        desc: "Receive requests from ideal students" },
-      { icon: "💸", title: "Teach & Earn", 
-        desc: "Conduct sessions and manage payments securely" }
-    ];
-  
-    return (
-      <section className="py-16 bg-gray-900">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              How It Works
+  const steps = [
+    {
+      icon: <FaSearch className="w-6 h-6" />,
+      title: "Find Your Perfect Tutor",
+      description: "Use our AI-powered matching system to discover tutors tailored to your learning style and goals",
+      gradient: "from-blue-400 to-purple-500"
+    },
+    {
+      icon: <FaCalendarAlt className="w-6 h-6" />,
+      title: "Schedule Flexible Sessions",
+      description: "Book lessons 24/7 with real-time availability tracking and instant confirmation",
+      gradient: "from-purple-400 to-pink-500"
+    },
+    {
+      icon: <FaVideo className="w-6 h-6" />,
+      title: "Start Your Learning Journey",
+      description: "Join interactive sessions with screen sharing, virtual whiteboard, and progress tracking",
+      gradient: "from-green-400 to-cyan-500"
+    }
+  ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3
+      }
+    }
+  };
+
+  const cardVariants = {
+    hidden: { y: 40, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 120 }
+    }
+  };
+
+  return (
+    <section className="py-24 bg-gray-900 relative overflow-hidden">
+
+      <div className="container mx-auto px-4 relative">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-20"
+        >
+          <div className="inline-flex items-center gap-3 mb-4">
+            <FaRocket className="w-20 h-20 text-blue-500 animate-pulse" />
+            <h2 className="text-4xl md:text-5xl font-bold bg-blue-700 bg-clip-text text-transparent">
+              Transform Your Learning Experience
             </h2>
-            <p className="text-gray-400 text-xl">
-              Simple steps to find tutors or start teaching
-            </p>
           </div>
-  
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Learner Section */}
-            <div className="bg-gray-800 rounded-2xl p-8">
-              <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                <img src="https://i.pinimg.com/236x/b2/da/f9/b2daf9019c4b08fa3a90c7d28a08a059.jpg" className="border-2 border-gray-200 rounded-md" />
-                For Learners
-              </h3>
-              <div className="space-y-6">
-                {learnerSteps.map((step, index) => (
-                  <div key={index} className="flex gap-4 group">
-                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 rounded-xl h-fit">
-                      <span className="text-2xl">{step.icon}</span>
-                    </div>
-                    <div>
-                      <h4 className="text-xl font-semibold text-white mb-2">
-                        {step.title}
-                      </h4>
-                      <p className="text-gray-400">{step.desc}</p>
-                    </div>
-                  </div>
-                ))}
+          <p className="text-xl text-white max-w-2xl mx-auto">
+            Discover the future of personalized education in three simple steps
+          </p>
+        </motion.div>
+
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "0px 0px -100px 0px" }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+        >
+          {steps.map((step, index) => (
+            <motion.div
+              key={index}
+              variants={cardVariants}
+              whileHover={{ y: -10 }}
+              className="group relative bg-white p-8 rounded-2xl shadow-xl border border-gray-100 hover:border-transparent transition-all duration-300"
+            >
+              {/* Animated gradient border */}
+              <div className={`absolute inset-0 bg-gradient-to-br ${step.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300 -z-10 rounded-2xl`} />
+
+              {/* Icon container */}
+              <motion.div 
+                initial={{ scale: 0.8 }}
+                whileInView={{ scale: 1 }}
+                transition={{ type: "spring", delay: index * 0.1 }}
+                className={`mb-6 w-14 h-14 rounded-xl bg-gradient-to-br ${step.gradient} flex items-center justify-center text-white`}
+              >
+                {step.icon}
+              </motion.div>
+
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">{step.title}</h3>
+              <p className="text-gray-600 leading-relaxed mb-6">{step.description}</p>
+              
+              {/* Animated hover element */}
+              <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <FiArrowRight className="w-6 h-6 text-blue-500" />
               </div>
-              <button className="mt-8 w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-lg hover:opacity-90 transition-opacity">
-                Find Your Tutor Now
-              </button>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* CTA Section */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2 }}
+          className="mt-20 text-center"
+        >
+          <div className="inline-flex flex-col items-center relative">
+            <div className="absolute -inset-4 bg-blue-500/10 blur-3xl rounded-full" />
+            <div className="flex items-center gap-3 mb-6">
+              <FaStar className="w-6 h-6 text-yellow-400 animate-pulse" />
+              <p className="text-xl text-white font-medium">
+                Join thousands of successful learners
+              </p>
             </div>
-  
-            {/* Tutor Section */}
-            <div className="bg-gray-800 rounded-2xl p-8">
-              <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-               <img src="https://i.pinimg.com/236x/08/cb/2d/08cb2d6f9ba35b4340b2988786ea1ba6.jpg" className="border-2 border-gray-200 rounded-md h-80 w-80" />
-                For Tutors
-              </h3>
-              <div className="space-y-6">
-                {tutorSteps.map((step, index) => (
-                  <div key={index} className="flex gap-4 group">
-                    <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-4 rounded-xl h-fit">
-                      <span className="text-2xl">{step.icon}</span>
-                    </div>
-                    <div>
-                      <h4 className="text-xl font-semibold text-white mb-2">
-                        {step.title}
-                      </h4>
-                      <p className="text-gray-400">{step.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <button className="mt-8 w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-4 rounded-lg hover:opacity-90 transition-opacity">
-                Start Teaching Today
-              </button>
-            </div>
+            <button className="relative overflow-hidden px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl text-lg font-semibold hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+              <span className="relative z-10">Start Your Free Trial</span>
+              <div className="absolute inset-0 bg-blue-500 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
+            </button>
           </div>
-        </div>
-      </section>
-    );
+        </motion.div>
+      </div>
+    </section>
+  );
 };
-  
+
 export default HowItWorks;

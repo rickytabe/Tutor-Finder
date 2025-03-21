@@ -15,7 +15,7 @@ export const TutorRegister = () => {
     password_confirmation: "",
     phone_number: "",
     whatsapp_number: "",
-    user_type: "learner",
+    user_type: "tutor",
     location: "",
     profile_image: null as File | null,
   });
@@ -97,14 +97,14 @@ export const TutorRegister = () => {
           throw new Error(data.message || "Registration failed");
         }
 
-        localStorage.setItem('token', data.token);
+        localStorage.setItem('Tutortoken', data.token);
         toast.success(data.message + " Redirecting to Login Page" || "Registration successfull! Redirecting to Login Page.");
         setTimeout(() => {
-          navigate("/auth/learner-login")
+          navigate("/auth/tutor-login")
         }, 3000)
       
       } catch (error: any) {
-        const errorMessage = error.message + " check Your internet connection" || "Registration failed. Please try again.";
+        const errorMessage = error.message  || "Registration failed. Please try again.";
         setFormError(errorMessage);
         toast.error(errorMessage);
       } finally {
@@ -330,7 +330,7 @@ export const TutorRegister = () => {
           disabled={isSubmitting}
           className="w-full bg-teal-600 text-white py-3 rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? "Creating Account..." : "Create Learner Account"}
+          {isSubmitting ? "Creating Account..." : "Create Tutor Account"}
         </button>
 
         <SocialAuthButtons />

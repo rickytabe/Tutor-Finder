@@ -17,6 +17,8 @@ export interface TutorProfile {
 }
 
 export interface Tutor {
+  available: any;
+  studentsTaught: number;
   id: string;
   name: string;
   email: string;
@@ -24,21 +26,21 @@ export interface Tutor {
   whatsapp_number: string;
   profile_image: string;
   location: string;
-  user_type: 'tutor' | 'student';
-  availability: 'available' | 'busy';
-  
+  user_type: "tutor" | "student";
+  availability: "available" | "busy";
+
   // Relationships (from include parameter)
   tutorProfile?: TutorProfile;
   categories?: Category[];
   qualifications?: Qualification[];
-  
+
   // Computed fields (added during transformation)
   price: number;
   rating: number;
   reviews: number;
   subjects: string[];
   specialties: string[];
-  type: 'professional' | 'student';
+  type: "professional" | "student";
 }
 
 export interface Qualification {
@@ -50,11 +52,11 @@ export interface Qualification {
 
 export interface SearchFilters {
   searchTerm: string;
-  locationType: 'online' | 'onsite' | 'all';
+  locationType: "online" | "onsite" | "all";
   priceRange: [number, number];
   minRating: number;
   availability: string[];
-  tutorType: 'all' | 'professional' | 'student';
+  tutorType: "all" | "professional" | "student";
   category?: Category | null;
 }
 
@@ -63,4 +65,3 @@ export interface FeaturedSection {
   tutors: Tutor[];
   description: string;
 }
-

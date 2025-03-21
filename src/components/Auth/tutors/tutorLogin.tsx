@@ -1,76 +1,77 @@
 // src/auth/learners/LearnerLogin.tsx
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import AuthWrapper from '../shared/authWrapper'; 
-import { validateEmail } from '../shared/authUtils';
-import SocialAuthButton from '../shared/socialLoginButton';
-import { toast } from 'react-toastify';
-
-
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import AuthWrapper from "../shared/authWrapper";
+import { validateEmail } from "../shared/authUtils";
+import SocialAuthButton from "../shared/socialLoginButton";
+import { toast } from "react-toastify";
+import { EyeOff, Eye } from "react-feather";
 
 const TutorLogin = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formError, setFormError] = useState('');
-  
+  const [formError, setFormError] = useState("");
+
   //I will need to Implement Trooteling later
-  const handleSubmit = async (e: React.FormEvent) => {  // Make handleSubmit async
+  const handleSubmit = async (e: React.FormEvent) => {
+    // Make handleSubmit async
     e.preventDefault();
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length === 0) {
       setIsSubmitting(true);
       try {
         const formPayload = new FormData();
-        formPayload.append('email', formData.email);
-        formPayload.append('password', formData.password);
-  
-      const response = await fetch(`${import.meta.env.VITE_Base_URL}/login`, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' },
-        body: formPayload,
-      });
-        
-      const data = await response.json()
-      const userData = data['authenticated user']
-     // Store token and user data
-      localStorage.setItem('token', data.token); 
-      localStorage.setItem('user', JSON.stringify(userData));
-      console.log('user: ', data)
-        
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed");
-      }
-        toast.success('Login successful!');
+        formPayload.append("email", formData.email);
+        formPayload.append("password", formData.password);
 
-        setTimeout(()=>{
-          navigate("/tutorHomePage")
-        }, 1000)
+        const response = await fetch(`${import.meta.env.VITE_Base_URL}/login`, {
+          method: "POST",
+          headers: { Accept: "application/json" },
+          body: formPayload,
+        });
 
+        const data = await response.json();
+        const userData = data["authenticated user"];
+        const Tutordata = JSON.stringify(userData);
+        // Store token and user data
+        localStorage.setItem("Tutortoken", data.token);
+        localStorage.setItem("tutor", Tutordata);
 
+        if (!response.ok) {
+          throw new Error(data.message || "Login failed");
+        } else if (userData.user_type === "learner") {
+          throw new Error("You are already a learner");
+          toast.error("You are already a learner");
+        }
+
+        toast.success("Login successful!");
+
+        setTimeout(() => {
+          navigate("/tutorHomePage");
+        }, 1000);
       } catch (error: any) {
-        setFormError(error.message + " Check your internet Connection" || "Login Failed, please try again");
-        toast.error(error.message + " Check your internet Connection" || "Login Failed, Please try again");
+        setFormError(error.message || "Login Failed, please try again");
+        toast.error(error.message || "Login Failed, Please try again");
       } finally {
         setIsSubmitting(false);
       }
     }
   };
 
-
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!validateEmail(formData.email)) {
-      newErrors.email = 'Invalid email address';
+      newErrors.email = "Invalid email address";
     }
     if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 8 characters';
+      newErrors.password = "Password must be at least 8 characters";
     }
     setErrors(newErrors);
     return newErrors;
@@ -86,7 +87,9 @@ const TutorLogin = () => {
         {/* Email Input */}
         <p className="my-1 text-sm text-red-600">{formError}</p>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Email</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Email
+          </label>
           <input
             type="email"
             value={formData.email}
@@ -94,7 +97,7 @@ const TutorLogin = () => {
               setFormData({ ...formData, email: e.target.value })
             }
             className={`mt-1 block w-full px-4 py-3 border rounded-lg ${
-              errors.email ? 'border-red-500' : 'border-gray-300'
+              errors.email ? "border-red-500" : "border-gray-300"
             }`}
             placeholder="Enter your email"
           />
@@ -110,13 +113,13 @@ const TutorLogin = () => {
           </label>
           <div className="relative mt-1">
             <input
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               value={formData.password}
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
               }
               className={`w-full px-4 py-3 border rounded-lg ${
-                errors.password ? 'border-red-500' : 'border-gray-300'
+                errors.password ? "border-red-500" : "border-gray-300"
               }`}
               placeholder="Enter your password"
             />
@@ -125,7 +128,7 @@ const TutorLogin = () => {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
             >
-              {showPassword ? '🙈' : '👁️'}
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
           {errors.password && (
@@ -149,21 +152,21 @@ const TutorLogin = () => {
           disabled={isSubmitting}
           className="w-full bg-teal-600 text-white py-3 rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50"
         >
-          {isSubmitting ? 'Signing In...' : 'Sign In'}
+          {isSubmitting ? "Signing In..." : "Sign In"}
         </button>
 
         {/* Social Login */}
-        <SocialAuthButton/>
+        <SocialAuthButton />
       </form>
 
       {/* Sign Up Prompt */}
       <div className="mt-8 text-center text-sm text-gray-600">
-        Don't have an account?{' '}
+        Don't have an account?{" "}
         <Link
-          to="/auth/learner-registration"
+          to="/auth/tutor-registration"
           className="text-teal-600 font-semibold hover:text-teal-700"
         >
-          Sign up
+          Sign Up
         </Link>
       </div>
     </AuthWrapper>

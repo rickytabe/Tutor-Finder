@@ -85,9 +85,9 @@ const AuthWrapper = ({
 
   return (
     <div className="min-h-screen lg:h-screen scrollbar-hide">
-      <div className="min-h-screen lg:h-screen grid md:grid-cols-1 lg:grid-cols-2">
+      <div className="min-h-screen lg:h-screen  grid md:grid-cols-1 lg:grid-cols-2">
         {/* Right Panel - Visual Design */}
-        <div className="bg-black order-first lg:order-none relative">
+        <div className="bg-black order-first lg:order-none h-[400px] lg:h-screen relative">
           <div className="absolute inset-0 z-0">
             <SquaresComponent
               speed={0.45}
