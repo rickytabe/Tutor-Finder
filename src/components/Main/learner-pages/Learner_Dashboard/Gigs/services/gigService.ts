@@ -1,5 +1,4 @@
 
-import { fetchApi } from '../../../../shared/api/client';
 import { GigCreate, Gig, PaginatedGigs, GigFilterParams, Category } from '../types/gigsTypes';
 import { defaultHeaders, handleResponse } from './api_base';
 

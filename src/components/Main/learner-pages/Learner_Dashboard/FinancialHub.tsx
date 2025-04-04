@@ -137,7 +137,7 @@ const FinancialHub: React.FC = () => {
           <FaWallet className="text-yellow-500" /> Recent Transactions
         </h3>
         <div className="space-y-4">
-          {[1, 2, 3].map((transaction, index) => (
+          {[1, 2, 3].map((_transaction, index) => (
             <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
               <div className="flex items-center gap-4">
                 <div className="p-3 rounded-full bg-blue-100">
