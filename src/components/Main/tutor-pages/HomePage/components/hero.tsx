@@ -1,8 +1,8 @@
 // components/Hero.tsx
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Squares from '../../../../styled-components/Squares.jsx'
-import Icon from "../../../learner-pages/HomePage/components/icons.js";
+import React from "react";
+import { motion } from "framer-motion";
+import { FiSearch } from "react-icons/fi";
+import Squares from "../../../../styled-components/Squares.jsx";
 
 const SquaresComponent = Squares as React.FC<{
   speed?: number;
@@ -12,24 +12,47 @@ const SquaresComponent = Squares as React.FC<{
   hoverFillColor?: string;
 }>;
 
-const Hero: React.FC = () => {
-  const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
+interface HeroProps {
+  searchTerm: string;
+  onSearchChange: (term: string) => void;
+  onSearchSubmit: () => void;
+}
+
+const Hero: React.FC<HeroProps> = ({
+  searchTerm,
+  onSearchChange,
+  onSearchSubmit,
+}) => {
   const popularSearches = ["Mathematics", "Physics", "English", "Programming"];
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchTerm.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
-    }
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.8,
+        staggerChildren: 0.2,
+      },
+    },
   };
 
-  const handlePopularSearch = (subject: string) => {
-    navigate(`/search?q=${encodeURIComponent(subject)}`);
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 },
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSearchSubmit();
   };
 
   return (
-    <div className="relative bg-black shadow-xl pt-32 pb-24 flex items-center justify-center">
+    <motion.div
+      className="relative bg-black shadow-xl pt-32 pb-24 flex items-center justify-center"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
       <div className="absolute inset-0 z-0">
         <SquaresComponent
           speed={0.15}
@@ -41,51 +64,76 @@ const Hero: React.FC = () => {
       </div>
 
       <div className="container mx-auto px-4 z-10">
-        <div className="max-w-3xl mx-auto text-center">
-          <h1
+        <motion.div
+          className="max-w-3xl mx-auto text-center"
+          variants={containerVariants}
+        >
+          <motion.h1
             className="text-4xl md:text-6xl font-bold mt-20 mb-6 leading-tight
-            bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent
+            bg-gradient-to-r from-indigo-400 to-blue-600 bg-clip-text text-transparent
             drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+            variants={itemVariants}
           >
-            Inspire the Next
+            Share Your Knowledge
             <br />
-            <span className="text-white/90">Generation</span>
-          </h1>
-          
-          <form onSubmit={handleSearchSubmit} className="mb-8">
+            <span className="text-white/90">Empower Learners</span>
+          </motion.h1>
+
+          <motion.form
+            onSubmit={handleSubmit}
+            className="mb-8"
+            variants={itemVariants}
+          >
             <div className="flex flex-col md:flex-row gap-4 max-w-2xl mx-auto">
+             
               <input
                 type="text"
-                placeholder="Search gigs by category..."
-                className="flex-1 px-6 py-4 text-lg rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-300"
+                placeholder="Find tutoring opportunities..."
+                className="flex-1 px-6 py-4 text-lg rounded-lg bg-white/5 backdrop-blur-sm 
+                         border border-blue-500 focus:outline-none focus:ring-2 focus:ring-indigo-300
+                         text-white placeholder-white/60"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+                onChange={(e) => onSearchChange(e.target.value)}
+               />
+             
               <button
                 type="submit"
-                className="px-8 py-4 bg-white text-teal-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                className="px-8 py-4 bg-blue-700 text-white font-semibold rounded-lg 
+                         hover:bg-blue-900 transition-colors flex items-center justify-center gap-2
+                         hover:shadow-lg hover:shadow-indigo-500/20"
               >
-                <Icon name="search" size={20} />
+                <FiSearch className="w-5 h-5" />
                 Search
               </button>
             </div>
-          </form>
-
-          <div className="flex flex-wrap justify-center gap-3">
-            <span className="text-white/90 text-sm">Popular searches:</span>
+          </motion.form>
+          <motion.div
+            className="flex flex-wrap justify-center gap-3"
+            variants={containerVariants}
+          >
+            <motion.span
+              className="text-white/90 text-sm"
+              variants={itemVariants}
+            >
+              Popular categories:
+            </motion.span>
             {popularSearches.map((subject) => (
-              <button
+              <motion.button
                 key={subject}
-                onClick={() => handlePopularSearch(subject)}
-                className="px-4 py-2 bg-white/10 text-white rounded-full hover:bg-white/20 transition-colors text-sm"
+                onClick={() => onSearchChange(subject)}
+                className="px-4 py-2 bg-white/10 text-white  rounded-full hover:bg-white/20 
+                         transition-colors text-sm backdrop-blur-sm"
+                variants={itemVariants}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 {subject}
-              </button>
+              </motion.button>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

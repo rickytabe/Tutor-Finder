@@ -1,37 +1,39 @@
 // components/ui/DeleteConfirmation.tsx
-import { BaseModal } from "./baseModal";
-import { Button } from "./button";
+import { BaseModal } from "../learner-pages/Learner_Dashboard/Gigs/components/ui/baseModal";
+import { Button } from "../learner-pages/Learner_Dashboard/Gigs/components/ui/button";
 
 interface DeleteConfirmationProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
   onConfirm: () => void;
   isDeleting: boolean;
+  info: string;
+  buttonInfo: string;
+  title: string;
+  buttonInfo2: string;
 }
 
 export const DeleteConfirmation = ({
   isOpen,
   onClose,
   onConfirm,
-  isDeleting
+  isDeleting,
+  info,
+  buttonInfo,
+  title,
+  buttonInfo2
 }: DeleteConfirmationProps) => (
   <BaseModal
     isOpen={isOpen}
     onClose={onClose}
-    title="Confirm Delete"
+    title={title}
     maxWidth="sm"
   >
     <div className="space-y-6">
-      <p className="text-gray-600">
-        Are you sure you want to delete this gig? This action cannot be undone.
-      </p>
-      
+      <p className="text-gray-600">{info}</p>
+
       <div className="flex justify-end gap-4">
-        <Button
-          variant="secondary"
-          onClick={onClose}
-          disabled={isDeleting}
-        >
+        <Button variant="secondary" onClick={onClose} disabled={isDeleting}>
           Cancel
         </Button>
         <Button
@@ -39,7 +41,7 @@ export const DeleteConfirmation = ({
           onClick={onConfirm}
           isLoading={isDeleting}
         >
-          {isDeleting ? 'Deleting...' : 'Delete'}
+          {isDeleting ? `${buttonInfo2}` : `${buttonInfo}`}
         </Button>
       </div>
     </div>

@@ -112,7 +112,7 @@ const PricingTransparency = () => {
                 
                 <div className="mb-6">
                   <span className="text-4xl font-bold text-white">
-                    CFA {plan.price}
+                    XAF {plan.price}
                   </span>
                   <span className="text-gray-400 ml-2">
                     / {plan.duration}

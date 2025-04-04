@@ -1,3 +1,4 @@
+export type GigStatus = 'pending' |'open' | 'in_progress' | 'completed' | 'cancelled';
 
 export interface GigCreate {
     category_name? : string;
@@ -7,7 +8,7 @@ export interface GigCreate {
     budget: number;
     location: string;
     budget_period: string;
-    status?: 'open' | 'completed' | 'cancelled'; 
+    status: GigStatus; 
   }
  export interface Category{
    id:number;

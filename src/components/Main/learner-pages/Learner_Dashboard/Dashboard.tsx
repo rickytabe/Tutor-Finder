@@ -4,7 +4,7 @@ import DashboardLayout from "./DashboardLayout";
 import NavBar from "../HomePage/components/nav_bar";
 
 
-const Dashboard = () => {
+const LearnerDashboard = () => {
   return (
       <div className="space-y-16">
       <NavBar /> 
@@ -15,4 +15,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default LearnerDashboard;

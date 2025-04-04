@@ -11,19 +11,15 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 
-interface NavBarProps {
-  // Add any props if needed
-}
 
 interface Tutor {
   id: number;
   name: string;
   email: string;
   profile_image?: string;
-  // Add other fields if needed
 }
 
-const NavBar: React.FC<NavBarProps> = () => {
+const NavBar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [tutor, setTutor] = useState<Tutor | null>(null);
@@ -102,7 +98,7 @@ const NavBar: React.FC<NavBarProps> = () => {
       icon: <FaHome className="w-5 h-5" />,
     },
     {
-      path: "/tutorDashboard",
+      path: "/tutor_dashboard",
       name: "Dashboard",
       icon: <FaThLarge className="w-5 h-5" />,
     },
@@ -166,14 +162,14 @@ const NavBar: React.FC<NavBarProps> = () => {
                 <div className="flex items-center gap-4 col-span-2">
                   <NavLink
                     to="/auth/tutor-login"
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/10 bg-green-500 transition-all"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/10  bg-blue-500 transition-all"
                   >
                     <FaSignInAlt className="w-5 h-5" />
                     <span className="text-sm font-medium">Login</span>
                   </NavLink>
                   <NavLink
                     to="/auth/tutor-registration"
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/10 bg-red-500 transition-all"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/10 bg-transparent border border-blue-500 transition-all"
                   >
                     <FaUserPlus className="w-5 h-5" />
                     <span className="text-sm font-medium">Sign Up</span>
@@ -282,7 +278,7 @@ const NavBar: React.FC<NavBarProps> = () => {
               </div>
               <button
                 onClick={handleLogout}
-                className="w-full mt-4 px-4 py-2 text-left text-red-400 hover:bg-white/10 rounded-lg flex items-center gap-2"
+                className="flex items-center gap-2 px-4 py-2 text-white rounded-lg hover:bg-white/10 border border-red-500 bg-red-500 transition-all"
               >
                 <FaSignOutAlt className="w-5 h-5" />
                 Log Out

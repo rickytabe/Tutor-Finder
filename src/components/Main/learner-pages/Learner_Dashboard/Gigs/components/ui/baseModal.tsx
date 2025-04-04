@@ -1,7 +1,7 @@
 
 interface BaseModalProps {
-    isOpen: boolean;
-    onClose: () => void;
+    isOpen?: boolean;
+    onClose?: () => void;
     title: string;
     children: React.ReactNode;
     maxWidth?: 'sm' | 'md' | 'lg';
@@ -23,7 +23,7 @@ interface BaseModalProps {
     };
   
     return (
-      <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
+      <div className="fixed inset-0 m-4 z-50 bg-black/50 backdrop-blur-sm">
         <div 
           className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full ${sizeClasses[maxWidth]} bg-white rounded-xl shadow-xl`}
           role="dialog"

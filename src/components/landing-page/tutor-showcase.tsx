@@ -194,7 +194,7 @@ const TutorShowcase = () => {
                 <div>
                   <p className="text-gray-400 text-sm">Starting from</p>
                   <p className="text-2xl font-bold text-white">
-                    CFA {tutor.price}
+                    XAF {tutor.price}
                     <span className="text-gray-400 text-lg ml-1">
                       {tutor.priceUnit}
                     </span>

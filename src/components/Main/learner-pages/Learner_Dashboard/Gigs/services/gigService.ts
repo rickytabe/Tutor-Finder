@@ -1,30 +1,8 @@
-// api/gigService.ts
 
+import { fetchApi } from '../../../../shared/api/client';
 import { GigCreate, Gig, PaginatedGigs, GigFilterParams, Category } from '../types/gigsTypes';
 import { defaultHeaders, handleResponse } from './api_base';
 
-// export const createGig = async (gigData: GigCreate): Promise<Gig> => {
-//   try {
-//     const payload = {
-//       category: Number(gigData.category_id),
-//       title: gigData.title,
-//       description: gigData.description,
-//       budget: Number(gigData.budget),
-//       location: gigData.location,
-//       budget_period: gigData.budget_period,
-//       status: gigData.status || 'open',
-//     };
-//     const response = await fetch(`${import.meta.env.VITE_Base_URL}/gigs`, {
-//       method: 'POST',
-//       headers: defaultHeaders,
-//       body: JSON.stringify(payload),
-//     });
-//     return handleResponse<Gig>(response);
-//   } catch (error:any) {
-//     console.error('Error creating gig:', error.message);
-//     throw new Error('Failed to create gig. Please try again.');
-//   }
-// };
 
 
 export const createGig = async (gigData: GigCreate): Promise<Gig> => {
@@ -33,15 +11,7 @@ export const createGig = async (gigData: GigCreate): Promise<Gig> => {
     const response = await fetch(`${import.meta.env.VITE_Base_URL}/gigs`, {
       method: 'POST',
       headers: defaultHeaders,
-      body: JSON.stringify({
-        category_id: Number(gigData.category_id),
-        title: gigData.title,
-        description: gigData.description,
-        budget: Number(gigData.budget),
-        location: gigData.location,
-        budget_period: gigData.budget_period,
-        status: gigData.status || 'open' 
-      })
+      body: JSON.stringify(gigData),
     });
 
     return handleResponse(response);
@@ -131,4 +101,22 @@ export const getCategories = async (): Promise<{ data: Category[] }> => {
       console.error('Get categories error:', error);
       throw new Error('Failed to load categories');
     }
-  };
+};
+
+export const publishGig = async (id: string): Promise<Gig> => {
+  const response = await fetch(`${import.meta.env.VITE_Base_URL}/gigs/${id}/publish`, {
+    headers: defaultHeaders,
+    method: 'PATCH'
+  });
+  const result = await (await response).json();
+  return result.data;
+};
+
+export const unpublishGig = async (id: string): Promise<Gig> => {
+  const response = await fetch(`${import.meta.env.VITE_Base_URL}/gigs/${id}/unpublish`, {
+    headers: defaultHeaders,
+    method: 'PATCH'
+  });
+   const result = await  (response).json();
+   return result.data;
+};

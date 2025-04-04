@@ -133,13 +133,13 @@ const TutorCard: React.FC<TutorCardProps> = ({ tutor }) => {
               key={i}
               whileHover={{ scale: 1.2 }}
               className={`${
-                i < Math.floor(tutor.rating) ? "text-blue-400" : "text-gray-600"
+                i < Math.floor(tutor.rating || 4.5) ? "text-blue-400" : "text-gray-600"
               }`}
             >
               <FaStar className="w-5 h-5" />
             </motion.span>
           ))}
-          <span className="ml-2">({tutor.rating}/5)</span>
+          <span className="ml-2">({tutor.rating ||4.5 }/5)</span>
         </div>
         <p className="flex items-center gap-2">
           <FaGraduationCap className="text-blue-400" />

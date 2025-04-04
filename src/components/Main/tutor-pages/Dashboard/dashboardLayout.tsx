@@ -1,20 +1,25 @@
-
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import Icon from '../HomePage/components/icons';
+import { 
+  FiBook,
+  FiCalendar,
+  FiDollarSign,
+  FiUser,
+  FiMenu
+} from 'react-icons/fi';
 
 interface Children {
   children: React.ReactNode;
 }
 
 const DashboardLayout: React.FC<Children> = ({ children }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const tabs = [
-    { id: 'learning', icon: 'book', label: 'Learning Overview' },
-    { id: 'sessions', icon: 'calendar', label: 'Session Management' },
-    { id: 'financial', icon: 'dollar', label: 'Financial Hub' },
-    { id: 'profile', icon: 'user', label: 'Profile Nexus' },
+    { id: 'teaching', icon: <FiBook />, label: 'Teaching Overview' },
+    { id: 'sessions', icon: <FiCalendar />, label: 'Session Management' },
+    { id: 'financial', icon: <FiDollarSign />, label: 'Financial Hub' },
+    { id: 'profile', icon: <FiUser />, label: 'Profile Nexus' },
   ];
 
   return (
@@ -22,12 +27,12 @@ const DashboardLayout: React.FC<Children> = ({ children }) => {
       {/* Sidebar for Desktop */}
       <aside className="hidden md:block w-64 bg-white shadow-lg shadow-black z-10 fixed h-full">
         <div className="p-4">
-          <h2 className="text-xl font-bold text-blue-600 mb-6">Learner Dashboard</h2>
+          <h2 className="text-xl font-bold text-blue-600 mb-6">Tutor Dashboard</h2>
           <nav>
             {tabs.map((tab) => (
               <NavLink
                 key={tab.id}
-                to={`/learner_dashboard/${tab.id}`}
+                to={`/tutor_dashboard/${tab.id}`}
                 className={({ isActive }) =>
                   `flex items-center p-3 rounded-lg mb-2 transition-colors ${
                     isActive
@@ -36,7 +41,7 @@ const DashboardLayout: React.FC<Children> = ({ children }) => {
                   }`
                 }
               >
-                <Icon name={tab.icon} className="mr-3" size={18} />
+                <span className="mr-3 text-lg">{tab.icon}</span>
                 <span className="text-sm">{tab.label}</span>
               </NavLink>
             ))}
@@ -45,11 +50,11 @@ const DashboardLayout: React.FC<Children> = ({ children }) => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 md:ml-64  bg-white pt-5 md:pt-0 ">
-        <div className="max-w-full mx-auto ">
+      <main className="flex-1 md:ml-64 bg-white pt-5 md:pt-0">
+        <div className="max-w-full mx-auto">
           {/* Mobile Header with Dropdown */}
           <div className="md:hidden mb-6">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center px-4">
               <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
               <div className="relative">
                 <button
@@ -57,19 +62,7 @@ const DashboardLayout: React.FC<Children> = ({ children }) => {
                   className="p-2 bg-blue-600 text-white rounded-lg focus:outline-none"
                   aria-label="Toggle Menu"
                 >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
+                  <FiMenu className="w-6 h-6" />
                 </button>
 
                 {/* Dropdown Menu */}
@@ -79,16 +72,16 @@ const DashboardLayout: React.FC<Children> = ({ children }) => {
                       {tabs.map((tab) => (
                         <NavLink
                           key={tab.id}
-                          to={`/learner_dashboard/${tab.id}`}
+                          to={`/tutor_dashboard/${tab.id}`}
                           className={({ isActive }) =>
                             `block px-4 py-3 text-sm text-gray-700 hover:bg-blue-100 transition-colors ${
                               isActive ? 'bg-blue-100 text-blue-600' : ''
                             }`
                           }
-                          onClick={() => setIsDropdownOpen(false)} // Close dropdown on link click
+                          onClick={() => setIsDropdownOpen(false)}
                         >
                           <div className="flex items-center">
-                            <Icon name={tab.icon} className="mr-2" size={16} />
+                            <span className="mr-2 text-lg">{tab.icon}</span>
                             <span>{tab.label}</span>
                           </div>
                         </NavLink>

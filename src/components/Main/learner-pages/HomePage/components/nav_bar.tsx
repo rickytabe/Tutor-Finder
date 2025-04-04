@@ -1,6 +1,6 @@
 // components/NavBar.tsx
 import React, { useEffect, useState, useCallback } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
   FaHome,
   FaThLarge,
@@ -102,7 +102,7 @@ const NavBar: React.FC<NavBarProps> = () => {
       icon: <FaHome className="w-5 h-5" />,
     },
     {
-      path: "/dashboard",
+      path: "/learner_dashboard",
       name: "Dashboard",
       icon: <FaThLarge className="w-5 h-5" />,
     },
@@ -146,7 +146,7 @@ const NavBar: React.FC<NavBarProps> = () => {
                   <FaBell className="w-6 h-6" />
                   <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
                 </button>
-                <div className="relative border-4 rounded-3xl border-blue-700">
+                <Link to='/learner_dashboard/profile' className="relative border-4 rounded-3xl border-blue-700">
                   {tutor?.profile_image ? (
                     <img 
                       src={tutor.profile_image} 
@@ -159,21 +159,21 @@ const NavBar: React.FC<NavBarProps> = () => {
                     </div>
                   )}
                   <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full"></div>
-                </div>
+                </Link>
               </>
             ) : (
               <div className="hidden md:block">
                 <div className="flex items-center gap-4 col-span-2">
                   <NavLink
                     to="/auth/learner-login"
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/10 bg-green-500 transition-all"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/10 bg-blue-500 transition-all"
                   >
                     <FaSignInAlt className="w-5 h-5" />
                     <span className="text-sm font-medium">Login</span>
                   </NavLink>
                   <NavLink
                     to="/auth/learner-registration"
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/10 bg-red-500 transition-all"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/10 border border-blue-500 bg-transparent transition-all"
                   >
                     <FaUserPlus className="w-5 h-5" />
                     <span className="text-sm font-medium">Sign Up</span>
@@ -259,8 +259,8 @@ const NavBar: React.FC<NavBarProps> = () => {
 
           {isAuthenticated ? (
             <div className="pt-8 border-t border-blue-400">
-              <div className="flex items-center gap-3 text-white p-2">
-                <div className="relative border-4 rounded-3xl border-blue-700">
+              <Link to="/learner_dashboard/profile" className="flex items-center gap-3 text-white p-2">
+                <div  className="relative border-4 rounded-3xl border-blue-700">
                   {tutor?.profile_image ? (
                     <img 
                       src={tutor.profile_image} 
@@ -279,7 +279,7 @@ const NavBar: React.FC<NavBarProps> = () => {
                   </p>
                   <p className="text-sm text-blue-100">Learner Account</p>
                 </div>
-              </div>
+              </Link>
               <button
                 onClick={handleLogout}
                 className="w-full mt-4 px-4 py-2 text-left text-red-400 hover:bg-white/10 rounded-lg flex items-center gap-2"

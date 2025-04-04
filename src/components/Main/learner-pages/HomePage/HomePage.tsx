@@ -18,12 +18,14 @@ const LearnerHomePage = () => {
   const [, setError] = useState<string | null>(null);
   const [tutors, setTutors] = useState<Tutor[]>([]);
   const [userLocation, setUserLocation] = useState<string | null>(null);
+  const [isLoadingTutors, setIsLoadingTutors] = useState(true);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(true);
 
   // Fetch data on component mount
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Fetch both tutors and categories
+        setIsLoadingTutors(true);
         const [tutorsData] = await Promise.all([
           fetchTutors({
             searchTerm: "",
@@ -39,6 +41,8 @@ const LearnerHomePage = () => {
         setTutors(tutorsData);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load data");
+      }finally{
+      setIsLoadingTutors(false);
       }
     };
 
@@ -63,6 +67,8 @@ const LearnerHomePage = () => {
       } catch (error) {
         console.error("Error accessing user location:", error);
         return null;
+      }finally{
+      setIsLoadingLocation(false);
       }
     };
 
@@ -110,24 +116,44 @@ const LearnerHomePage = () => {
       <section className="bg-white py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold mb-8">Top Rated Tutors</h2>
-           <motion.div
-                className="grid grid-cols-1 md:grid-cols-3 gap-8"
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-              >
-                {topTutors.map((tutor: Tutor) => (
-                  <TutorCard key={tutor.id} tutor={tutor} />
-                ))}
-              </motion.div>
-         </div>
+          {isLoadingTutors ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="h-40 bg-gray-200 rounded-xl animate-pulse"
+              ></div>
+            ))}
+          </div>
+          ) : (
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+            >
+              {topTutors.map((tutor: Tutor) => (
+                <TutorCard key={tutor.id} tutor={tutor} />
+              ))}
+            </motion.div>
+          )}
+        </div>
       </section>
 
       {/* Nearby Tutors Section */}
       <section className="py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold mb-8">Tutors Near You</h2>
-          {nearbyTutors.length > 0 ? (
+          {isLoadingLocation ? (
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="h-40 bg-gray-200 rounded-xl animate-pulse"
+              ></div>
+            ))}
+          </div>
+          ) : nearbyTutors.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {nearbyTutors.map((tutor: Tutor) => (
                 <TutorCard key={tutor.id} tutor={tutor} />
@@ -142,7 +168,7 @@ const LearnerHomePage = () => {
           )}
         </div>
       </section>
-
+      
       <Footer />
     </div>
   );

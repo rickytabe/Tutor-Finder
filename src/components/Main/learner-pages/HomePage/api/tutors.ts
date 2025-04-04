@@ -1,7 +1,6 @@
 // api/tutorService.ts
 import { Tutor } from "../../../shared/types";
 
-const API_BASE = "https://rrn24.techchantier.site/tutor-finder/public/api";
 
 // export const fetchTutors = async (filters: SearchFilters) => {
 //   try {
@@ -86,7 +85,7 @@ export const fetchTutors = async (filters: any): Promise<Tutor[]> => {
     }
 
     const queryParams = new URLSearchParams(params);
-    const response = await fetch(`${API_BASE}/tutors?${queryParams}`, {
+    const response = await fetch(`${import.meta.env.VITE_Base_URL}/tutors?${queryParams}`, {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",

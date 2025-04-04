@@ -21,8 +21,8 @@ const TutorLogin = () => {
 
   //I will need to Implement Trooteling later
   const handleSubmit = async (e: React.FormEvent) => {
-    // Make handleSubmit async
     e.preventDefault();
+    setFormError("");
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length === 0) {
       setIsSubmitting(true);
