@@ -36,16 +36,16 @@ const TutorProfileNexus = () => {
 
   // Initialize with default tutor profile
   const defaultProfile: TutorProfile = {
-    bio: "",
-    years_of_experience: 0,
+    bio: "I am a ",
+    years_of_experience: 4,
     verification_status: "pending",
     availability_status: "available",
-    subjects_taught: [],
+    subjects_taught: ['Physics', 'Chemistry'],
     teaching_method: ""
   };
 
   useEffect(() => {
-    const storedTutor = localStorage.getItem("user");
+    const storedTutor = localStorage.getItem("tutor");
     if (!storedTutor) {
       navigate("/auth/tutor-login");
       return;
