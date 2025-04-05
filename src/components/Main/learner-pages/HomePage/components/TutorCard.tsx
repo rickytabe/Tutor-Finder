@@ -9,12 +9,16 @@ import {
 } from "react-icons/fa";
 import { FiArrowRight } from "react-icons/fi";
 import { Tutor } from "../../../shared/types";
+import { Link } from "react-router-dom";
 
 interface TutorCardProps {
   tutor: Tutor;
 }
 
+  
 const TutorCard: React.FC<TutorCardProps> = ({ tutor }) => {
+  
+
   // Extract profile details
   const TutorProfile: {
     experience: string;
@@ -56,11 +60,10 @@ const TutorCard: React.FC<TutorCardProps> = ({ tutor }) => {
         initial={{ scale: 0.8 }}
         whileInView={{ scale: 1 }}
         transition={{ type: "spring", delay: 0.2 }}
-        className={`absolute top-4 right-4 px-3 py-1   rounded-full text-sm flex items-center gap-2 ${
-          tutor.available || true
+        className={`absolute top-4 right-4 px-3 py-1   rounded-full text-sm flex items-center gap-2 ${tutor.available || true
             ? "bg-green-900/30 text-green-400"
             : "bg-red-900/30 text-red-400"
-        }`}
+          }`}
       >
         {tutor.available || true ? (
           <FaCheck className="w-4 h-4" />
@@ -132,14 +135,13 @@ const TutorCard: React.FC<TutorCardProps> = ({ tutor }) => {
             <motion.span
               key={i}
               whileHover={{ scale: 1.2 }}
-              className={`${
-                i < Math.floor(tutor.rating || 4.5) ? "text-blue-400" : "text-gray-600"
-              }`}
+              className={`${i < Math.floor(tutor.rating || 4.5) ? "text-blue-400" : "text-gray-600"
+                }`}
             >
               <FaStar className="w-5 h-5" />
             </motion.span>
           ))}
-          <span className="ml-2">({tutor.rating ||4.5 }/5)</span>
+          <span className="ml-2">({tutor.rating || 4.5}/5)</span>
         </div>
         <p className="flex items-center gap-2">
           <FaGraduationCap className="text-blue-400" />
@@ -156,29 +158,25 @@ const TutorCard: React.FC<TutorCardProps> = ({ tutor }) => {
         <div>
           <p className="text-gray-400 text-sm">Starting from</p>
           <p className="text-2xl font-bold text-white">
-            CFA {tutor.price || 1000}
+            XAF {tutor.price || 1000}
             <span className="text-gray-400 text-lg ml-1">/ hour</span>
           </p>
         </div>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className={`px-6 py-3 rounded-lg font-semibold flex items-center gap-2 ${
-            tutor.available || true
-              ? "bg-blue-700 text-white hover:shadow-lg"
-              : "bg-gray-700 text-gray-400 cursor-not-allowed"
-          }`}
-          disabled={!tutor.available}
-        >
-          {tutor.available || true ? (
-            <>
-              Book Now
-              <FiArrowRight className="text-lg" />
-            </>
-          ) : (
-            "Unavailable"
-          )}
-        </motion.button>
+        {tutor.available || true ? (
+          <Link
+            to="/tutorDetails"
+            className="px-6 py-3 rounded-lg font-semibold flex items-center gap-2 bg-blue-700 text-white hover:shadow-lg"
+          >
+            Book Now
+            <FiArrowRight className="text-lg" />
+          </Link>
+        ) : (
+          <div
+            className="px-6 py-3 rounded-lg font-semibold flex items-center gap-2 bg-gray-700 text-gray-400 cursor-not-allowed"
+          >
+            Unavailable
+          </div>
+        )}
       </motion.div>
     </motion.div>
   );

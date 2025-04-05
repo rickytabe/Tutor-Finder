@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Footer from "./components/footer";
+// import Footer from "./components/footer";
 import TutorCard from "./components/TutorCard";
 import NavBar from "./components/nav_bar";
 import Hero from "./components/Hero";
@@ -8,6 +8,7 @@ import { CategoriesSection } from "./components/CategoriesSection";
 import { fetchCategories, fetchTutors } from "./api/tutors";
 import { Tutor } from "../../shared/types";
 import { motion } from "framer-motion";
+import Footer from "../../../landing-page/footer";
 
 interface User {
   location: string;

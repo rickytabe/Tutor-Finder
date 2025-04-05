@@ -21,6 +21,8 @@ import LearnerDashboard from "./components/Main/learner-pages/Learner_Dashboard/
 import TutorDashboard from "./components/Main/tutor-pages/Dashboard/dashboard";
 import TeachingOverview from "./components/Main/tutor-pages/Dashboard/teachingOverview";
 import TutorProfileNexus from "./components/Main/tutor-pages/Dashboard/tutorProfile";
+import TutorProposalsDashboard from "./components/Main/tutor-pages/Dashboard/sessions";
+import WorkInProgress from "./components/Main/learner-pages/HomePage/components/tutordetails";
 
 
 function App() {
@@ -43,7 +45,7 @@ function App() {
             <Route path="/search" element={<SearchPage />} />
             <Route path="/lcommunity" element={<LearnerCommunity />} />
             <Route path="/tcommunity" element={<TutorCommunity />} />
-            
+            <Route path="/tutorDetails" element={<WorkInProgress />} />
             {/* Routes for Learner Dashoard */}
             <Route path="/learner_dashboard" element={<LearnerDashboard />}>
               <Route index element={<LearningOverview />} />
@@ -57,7 +59,7 @@ function App() {
             <Route path="/tutor_dashboard" element={<TutorDashboard />}>
               <Route index element={<TeachingOverview />} />
               <Route path="teaching" element={<TeachingOverview />} />
-              <Route path="sessions" element={<Gigs />} />
+              <Route path="sessions" element={<TutorProposalsDashboard />} />
               <Route path="financial" element={<FinancialHub />} />
               <Route path="profile" element={<TutorProfileNexus />} />
             </Route>

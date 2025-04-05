@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { GigTabs } from "../ui/gigTabs";
 import ApplicationsList from "./applicationList";
 import GigCardSkeleton from "../../../../../tutor-pages/HomePage/components/gigCardSkelecton";
+import { FiInfo } from "react-icons/fi";
 
 const itemsPerPage = 4;
 
@@ -141,36 +142,54 @@ const GigList = () => {
         <ApplicationsList />
       ) : (
         <AnimatePresence mode="wait">
-          <motion.div
-            key={`${selectedTab}-${currentPage}`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          >
-            {paginatedGigs.map((gig) => (
-              <GigCard
-                key={gig.id}
-                gig={gig}
-                applicationCount={applicationCounts[gig.id] || 0}
-                onViewApplications={() => {
-                  setSelectedTab("applications");
-                }}
-                onEdit={() => setSelectedGig(gig)}
-                onDelete={() => setDeleteGigId(gig.id.toString())}
-                onPublish={() =>
-                  handleStatusChange(gig.id.toString(), "publish")
-                }
-                onUnpublish={() =>
-                  handleStatusChange(gig.id.toString(), "unpublish")
-                }
-              />
-            ))}
-          </motion.div>
+          {paginatedGigs.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center justify-center py-12 text-center"
+            >
+              <FiInfo className="w-12 h-12 text-gray-400 mb-4" />
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                No {selectedTab === "all" ? "" : selectedTab} gigs found
+              </h3>
+              <p className="text-gray-600 max-w-md">
+                {selectedTab === "draft" 
+                  ? "You don't have any draft gigs. Start creating a new gig to get started!"
+                  : "Create your first gig to start Learning from expert tutors."}
+              </p>
+            </motion.div>
+          ) : (
+            <motion.div
+              key={`${selectedTab}-${currentPage}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-6"
+            >
+              {paginatedGigs.map((gig) => (
+                <GigCard
+                  key={gig.id}
+                  gig={gig}
+                  applicationCount={applicationCounts[gig.id] || 0}
+                  onViewApplications={() => {
+                    setSelectedTab("applications");
+                  }}
+                  onEdit={() => setSelectedGig(gig)}
+                  onDelete={() => setDeleteGigId(gig.id.toString())}
+                  onPublish={() =>
+                    handleStatusChange(gig.id.toString(), "publish")
+                  }
+                  onUnpublish={() =>
+                    handleStatusChange(gig.id.toString(), "unpublish")
+                  }
+                />
+              ))}
+            </motion.div>
+          )}
         </AnimatePresence>
       )}
 
-      {totalPages > 1 && selectedTab !== "applications" && (
+      {totalPages > 1 && selectedTab !== "applications" && paginatedGigs.length > 0 && (
         <motion.div
           className="flex justify-center gap-2 mt-8"
           initial={{ opacity: 0 }}

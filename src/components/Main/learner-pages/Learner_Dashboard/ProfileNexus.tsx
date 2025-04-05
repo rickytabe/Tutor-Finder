@@ -132,7 +132,7 @@ const ProfileNexus = () => {
       className="w-full min-h-screen bg-gray-50"
     >
       {/* Profile Header */}
-      <div className="bg-indigo-700 pt-8 pb-24 shadow-lg">
+      <div className="bg-blue-700 pt-8 pb-24 shadow-lg">
         <div className="max-w-6xl mx-auto px-4">
           <motion.div
             whileHover={{ scale: 1.02 }}
@@ -146,7 +146,7 @@ const ProfileNexus = () => {
             />
             <motion.button
               whileHover={{ scale: 1.1 }}
-              className="absolute bottom-0 right-0 p-2 bg-indigo-600 rounded-full shadow-md"
+              className="absolute bottom-0 right-0 p-2 bg-blue-600 rounded-full shadow-md"
               onClick={() => setEditMode(true)}
             >
               <FiEdit className="text-white text-lg" />
@@ -219,7 +219,7 @@ const ProfileNexus = () => {
             <div className="flex gap-3">
               <motion.button
                 whileHover={{ scale: 1.05 }}
-                className="px-6 py-2 bg-indigo-600 text-white rounded-lg flex items-center gap-2"
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2"
                 onClick={() => editMode ? handleSaveProfile() : setEditMode(true)}
               >
                 <FiEdit /> {editMode ? "Save" : "Edit"}
@@ -344,7 +344,7 @@ const ProfileNexus = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleCreatePost}
-                className="w-full md:w-auto px-8 py-3 bg-indigo-600 text-white rounded-xl flex items-center gap-2 justify-center"
+                className="w-full md:w-auto px-8 py-3 bg-blue-600 text-white rounded-xl flex items-center gap-2 justify-center"
               >
                 <FiPlus className="text-lg" />
                 Publish Post

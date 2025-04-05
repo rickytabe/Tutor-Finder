@@ -139,7 +139,7 @@ const TutorProfileNexus = () => {
                 <FiClock className="text-indigo-600" />
                 <h3 className="font-semibold">Experience</h3>
               </div>
-              <p>{tutor.tutor_profile.years_of_experience} years</p>
+              <p>{tutor.tutor_profile.years_of_experience || 4} years</p>
             </div>
           </div>
 
