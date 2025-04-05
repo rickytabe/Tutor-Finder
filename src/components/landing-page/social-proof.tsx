@@ -5,7 +5,7 @@ const SocialProof = () => {
       name: "Tabe Rickson",
       role: "Frontend Developer @TechCorp",
       score: "4.98/5",
-      image: "https://randomuser.me/api/portraits/women/44.jpg", // Add image URL
+      image: "https://randomuser.me/api/portraits/women/44.jpg",
       details: "Tabe started with no coding experience and now works at a top tech company. He credits his success to the hands-on tutoring and real-world projects."
     },
     {
@@ -13,7 +13,7 @@ const SocialProof = () => {
       name: "Michael Obi",
       role: "High School Student",
       score: "4.95/5",
-      image: "https://randomuser.me/api/portraits/men/32.jpg", // Add image URL
+      image: "https://randomuser.me/api/portraits/men/32.jpg",
       details: "Michael struggled with math for years but turned things around with personalized tutoring. He now tutors his peers in advanced calculus."
     }
   ];
@@ -25,7 +25,27 @@ const SocialProof = () => {
     { number: "98%", label: "Success Rate" }
   ];
 
-  const sponsors = ['Tech Chantier', 'CodeCamp', 'MathMaster', 'EduTech'];
+  const sponsors = [
+    { 
+      name: 'Tech Chantier',
+      logo: 'src/assets/techchantier.png'
+    },
+    { 
+      name: 'AfroVision',
+      logo: 'src/assets/afroVision.png'
+    },
+    { 
+      name: 'Nkwa',
+      logo: 'src/assets/Nkwa.png' 
+    },
+    { 
+      name: 'Buyum',
+      logo: 'src/assets/buyum.png' 
+    }
+  ];
+
+  // Double array for seamless infinite scroll
+  const duplicatedSponsors = [...sponsors, ...sponsors];
 
   return (
     <section className="py-16 bg-gray-50">
@@ -101,21 +121,51 @@ const SocialProof = () => {
           ))}
         </div>
 
-        {/* Trusted By */}
-        <div className="mt-16 text-center">
-          <h3 className="text-gray-500 mb-6">Trusted by leading institutions</h3>
-          <div className="flex flex-wrap justify-center items-center gap-8 opacity-75">
-            {sponsors.map((sponsor, index) => (
-              <span
-                key={index}
-                className="text-2xl font-bold text-gray-700 hover:text-blue-600 transition-colors duration-300"
-              >
-                {sponsor}
-              </span>
-            ))}
+        {/* Enhanced Trusted By Section with Auto Scroll */}
+        <div className="mt-16">
+          <h3 className="text-gray-500 mb-8 text-center text-lg font-medium">
+            Trusted by Leading Organizations Worldwide
+          </h3>
+          <div className="relative overflow-hidden py-8">
+            <div className="animate-infinite-scroll flex w-max items-center space-x-16">
+              {duplicatedSponsors.map((sponsor, index) => (
+                <div 
+                  key={index}
+                  className="group flex flex-col items-center justify-center min-w-[200px] transform transition-all duration-500 hover:scale-105 px-6 py-4 rounded-xl hover:bg-white hover:shadow-lg"
+                >
+                  <div className="flex items-center justify-center h-32 w-48">
+                    <img
+                      src={sponsor.logo}
+                      alt={sponsor.name}
+                      className="object-contain max-h-20 w-full transition-all duration-300"
+                      loading="lazy"
+                    />
+                  </div>
+                  <span className="text-gray-700 font-medium text-lg mt-4 opacity-90 group-hover:opacity-100 transition-opacity">
+                    {sponsor.name}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Add global styles for animation */}
+      <style>{`
+        @keyframes infinite-scroll {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+
+        .animate-infinite-scroll {
+          animation: infinite-scroll 40s linear infinite;
+        }
+
+        .animate-infinite-scroll:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
     </section>
   );
 };

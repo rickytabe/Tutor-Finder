@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { FiUser, FiPhone, FiMapPin, FiAward, FiEdit, FiPlus, FiMessageSquare, FiThumbsUp, FiShare } from "react-icons/fi";
+import { 
+  FiUser, FiAward, FiEdit, FiPlus, FiMessageSquare, 
+  FiThumbsUp, FiShare, FiMail, FiBriefcase, 
+   FiMapPin, FiPhone, FiInfo
+} from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import { LogoutUser } from "../../../Auth/shared/AuthServices";
 import { toast } from "react-toastify";
@@ -40,9 +44,7 @@ const ProfileNexus = () => {
   const [editedUser, setEditedUser] = useState<Partial<User>>({});
   const [newPost, setNewPost] = useState("");
   const [posts, setPosts] = useState<Post[]>([]);
-  const [showSocial, setShowSocial] = useState(false);
 
-  // Load initial data
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const storedPosts = localStorage.getItem("posts");
@@ -57,7 +59,6 @@ const ProfileNexus = () => {
     setPosts(storedPosts ? JSON.parse(storedPosts) : []);
   }, [navigate]);
 
-  // Save posts to local storage
   useEffect(() => {
     localStorage.setItem("posts", JSON.stringify(posts));
   }, [posts]);
@@ -68,9 +69,7 @@ const ProfileNexus = () => {
     if (success) {
       setIsLogingout(false);
       toast.success("Logout successful");
-      setTimeout(() => {
-        navigate("/auth/learner-login");
-      }, 3000);
+      setTimeout(() => navigate("/auth/learner-login"), 1500);
     } else {
       setIsLogingout(false);
       toast.error("Logout failed");
@@ -108,20 +107,19 @@ const ProfileNexus = () => {
   };
 
   if (!user) return (
-    <div className="flex justify-center items-center h-screen bg-gradient-to-r from-gray-50 to-gray-100">
+    <div className="flex justify-center items-center h-screen bg-gray-50">
       <motion.div
         animate={{ rotate: 360 }}
         transition={{ duration: 1, repeat: Infinity }}
-        className="h-12 w-12 border-t-2 border-b-2 border-teal-600 rounded-full"
+        className="h-12 w-12 border-t-2 border-b-2 border-indigo-600 rounded-full"
       />
     </div>
   );
 
-  // Profile image handling
-  const isValidImage = user.profile_image?.startsWith("http");
-  const avatarUrl = isValidImage ? user.profile_image : "https://i.pinimg.com/736x/3f/94/70/3f9470b34a8e3f526dbdb022f9f19cf7.jpg";
+  const avatarUrl = user.profile_image?.startsWith("http") 
+    ? user.profile_image 
+    : "https://i.pinimg.com/736x/3f/94/70/3f9470b34a8e3f526dbdb022f9f19cf7.jpg";
 
-  // Animation variants
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
@@ -131,83 +129,104 @@ const ProfileNexus = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="w-full min-h-screen bg-gradient-to-br from-gray-50 to-gray-100"
+      className="w-full min-h-screen bg-gray-50"
     >
       {/* Profile Header */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="relative bg-gradient-to-r from-blue-600 to-teal-600 h-64 shadow-lg"
-      >
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="absolute -bottom-16 left-8 cursor-pointer"
-        >
-          <img
-            src={avatarUrl}
-            alt="Profile"
-            className="w-32 h-32 rounded-full border-4 border-white shadow-xl"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = "https://i.pinimg.com/736x/3f/94/70/3f9470b34a8e3f526dbdb022f9f19cf7.jpg";
-            }}
-          />
-        </motion.div>
-      </motion.div>
+      <div className="bg-indigo-700 pt-8 pb-24 shadow-lg">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="relative -mb-16 w-32 h-32 bg-white rounded-full shadow-xl border-4 border-white"
+          >
+            <img
+              src={avatarUrl}
+              alt="Profile"
+              className="w-full h-full rounded-full object-cover"
+              onError={(e) => (e.target as HTMLImageElement).src = "https://i.pinimg.com/736x/3f/94/70/3f9470b34a8e3f526dbdb022f9f19cf7.jpg"}
+            />
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              className="absolute bottom-0 right-0 p-2 bg-indigo-600 rounded-full shadow-md"
+              onClick={() => setEditMode(true)}
+            >
+              <FiEdit className="text-white text-lg" />
+            </motion.button>
+          </motion.div>
+        </div>
+      </div>
 
-      {/* Profile Content */}
-      <div className="pt-20 px-8 pb-8 max-w-6xl mx-auto">
+      {/* Main Content */}
+      <div className="max-w-6xl mx-auto px-4 -mt-16 space-y-8">
+        {/* Profile Section */}
         <motion.div
           variants={fadeIn}
           initial="hidden"
           animate="visible"
-          className="bg-white rounded-2xl shadow-lg p-8 mb-8"
+          className="bg-white rounded-xl shadow-lg p-8"
         >
-          <div className="flex justify-between items-start mb-6">
-            <div>
-              <motion.h1
-                whileHover={{ x: 5 }}
-                className="text-4xl font-bold text-gray-800 mb-2 flex items-center gap-3"
-              >
-                <FiUser className="text-teal-600" />
-                {editMode ? (
-                  <input
-                    type="text"
-                    value={editedUser.name || ""}
-                    onChange={(e) => setEditedUser({ ...editedUser, name: e.target.value })}
-                    className="border-b-2 border-teal-600"
-                  />
-                ) : (
-                  user.name
-                )}
-              </motion.h1>
-              <p className="text-lg text-gray-600">
-                {editMode ? (
-                  <input
-                    type="text"
-                    value={editedUser.bio || ""}
-                    onChange={(e) => setEditedUser({ ...editedUser, bio: e.target.value })}
-                    placeholder="Add a bio"
-                    className="w-full border-b-2 border-gray-200"
-                  />
-                ) : (
-                  user.bio || "🌟 Passionate learner sharing knowledge and experiences"
-                )}
-              </p>
+          <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-8">
+            <div className="flex-1 space-y-4">
+              <div className="flex items-center gap-4">
+                <FiUser className="text-indigo-600 text-3xl" />
+                <motion.h1 
+                  className="text-3xl font-bold text-gray-900"
+                  whileHover={{ x: 5 }}
+                >
+                  {editMode ? (
+                    <input
+                      type="text"
+                      value={editedUser.name || ""}
+                      onChange={(e) => setEditedUser({ ...editedUser, name: e.target.value })}
+                      className="border-b-2 border-indigo-600"
+                    />
+                  ) : (
+                    user.name
+                  )}
+                </motion.h1>
+              </div>
+
+              <div className="flex items-center gap-3 text-gray-600">
+                <FiBriefcase className="text-indigo-600" />
+                <span>{user.user_type}</span>
+                <span className="text-sm">• Member since {new Date(user.created_at).toLocaleDateString()}</span>
+              </div>
+
+              {user.bio && (
+                <motion.div 
+                  className="mt-4 p-4 bg-indigo-50 rounded-lg"
+                  whileHover={{ scale: 1.01 }}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <FiInfo className="text-indigo-600" />
+                    <span className="font-medium">About Me</span>
+                  </div>
+                  <p className="text-gray-700 leading-relaxed">
+                    {editMode ? (
+                      <textarea
+                        value={editedUser.bio || ""}
+                        onChange={(e) => setEditedUser({ ...editedUser, bio: e.target.value })}
+                        className="w-full p-2 border rounded-lg"
+                        rows={3}
+                      />
+                    ) : (
+                      user.bio
+                    )}
+                  </p>
+                </motion.div>
+              )}
             </div>
 
             <div className="flex gap-3">
               <motion.button
                 whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="p-2 bg-teal-600 text-white rounded-lg"
+                className="px-6 py-2 bg-indigo-600 text-white rounded-lg flex items-center gap-2"
                 onClick={() => editMode ? handleSaveProfile() : setEditMode(true)}
               >
-                {editMode ? "Save Profile" : <FiEdit size={20} />}
+                <FiEdit /> {editMode ? "Save" : "Edit"}
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="p-2 bg-red-600 text-white rounded-lg"
+                className="px-6 py-2 bg-red-100 text-red-600 rounded-lg"
                 onClick={() => setIsOpen(true)}
               >
                 Logout
@@ -215,73 +234,88 @@ const ProfileNexus = () => {
             </div>
           </div>
 
-          {/* Social Links */}
-          <motion.div
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="p-4 bg-gray-50 rounded-xl cursor-pointer"
-              onClick={() => setShowSocial(!showSocial)}
+          {/* Contact Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            <motion.div 
+              className="p-4 bg-indigo-50 rounded-lg flex items-center gap-4"
+              whileHover={{ x: 5 }}
             >
-              <div className="flex items-center gap-3">
-                <FiPhone className="text-teal-600" />
-                <span className="font-medium">{user.phone_number || "Add phone"}</span>
+              <div className="p-3 bg-indigo-100 rounded-lg">
+                <FiMail className="text-indigo-600 text-xl" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Email</p>
+                <p className="font-medium text-gray-900">{user.email}</p>
               </div>
             </motion.div>
 
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="p-4 bg-gray-50 rounded-xl cursor-pointer"
-              onClick={() => setShowSocial(!showSocial)}
-            >
-              <div className="flex items-center gap-3">
-                <FaWhatsapp className="text-green-600" />
-                <span className="font-medium">{user.whatsapp_number || "Connect WhatsApp"}</span>
-              </div>
-            </motion.div>
+            {user.phone_number && (
+              <motion.div 
+                className="p-4 bg-indigo-50 rounded-lg flex items-center gap-4"
+                whileHover={{ x: 5 }}
+              >
+                <div className="p-3 bg-indigo-100 rounded-lg">
+                  <FiPhone className="text-indigo-600 text-xl" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Phone</p>
+                  <p className="font-medium text-gray-900">{user.phone_number}</p>
+                </div>
+              </motion.div>
+            )}
 
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="p-4 bg-gray-50 rounded-xl cursor-pointer"
-            >
-              <div className="flex items-center gap-3">
-                <FiMapPin className="text-teal-600" />
-                <span className="font-medium">{user.location || "Set location"}</span>
-              </div>
-            </motion.div>
+            {user.whatsapp_number && (
+              <motion.div 
+                className="p-4 bg-indigo-50 rounded-lg flex items-center gap-4"
+                whileHover={{ x: 5 }}
+              >
+                <div className="p-3 bg-indigo-100 rounded-lg">
+                  <FaWhatsapp className="text-indigo-600 text-xl" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">WhatsApp</p>
+                  <p className="font-medium text-gray-900">{user.whatsapp_number}</p>
+                </div>
+              </motion.div>
+            )}
 
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="p-4 bg-gray-50 rounded-xl cursor-pointer"
-            >
-              <div className="flex items-center gap-3">
-                <FiAward className="text-teal-600" />
-                <span className="font-medium">{user.user_type}</span>
-              </div>
-            </motion.div>
-          </motion.div>
+            {user.location && (
+              <motion.div 
+                className="p-4 bg-indigo-50 rounded-lg flex items-center gap-4"
+                whileHover={{ x: 5 }}
+              >
+                <div className="p-3 bg-indigo-100 rounded-lg">
+                  <FiMapPin className="text-indigo-600 text-xl" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Location</p>
+                  <p className="font-medium text-gray-900">{user.location}</p>
+                </div>
+              </motion.div>
+            )}
+          </div>
 
           {/* Skills Section */}
-          <div className="mb-8">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Skills & Expertise</h3>
-            <div className="flex flex-wrap gap-3">
+          <div className="p-4 bg-indigo-50 rounded-lg">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <FiAward className="text-indigo-600" />
+              Skills & Expertise
+            </h3>
+            <div className="flex flex-wrap gap-2">
               {(user.skills || []).map((skill, index) => (
                 <motion.span
                   key={index}
                   whileHover={{ scale: 1.05 }}
-                  className="px-4 py-2 bg-teal-100 text-teal-800 rounded-full text-sm"
+                  className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium"
                 >
                   {skill}
                 </motion.span>
               ))}
               <motion.button
                 whileHover={{ scale: 1.1 }}
-                className="p-2 bg-gray-200 rounded-full"
+                className="p-1 bg-indigo-100 rounded-full"
               >
-                <FiPlus className="text-gray-600" />
+                <FiPlus className="text-indigo-600" />
               </motion.button>
             </div>
           </div>
@@ -290,30 +324,33 @@ const ProfileNexus = () => {
         {/* Post Creation */}
         <motion.div
           variants={fadeIn}
-          className="bg-white rounded-2xl shadow-lg p-6 mb-8"
+          className="bg-white rounded-xl shadow-lg p-6"
         >
           <div className="flex gap-4">
             <img
               src={avatarUrl}
               alt="Profile"
-              className="w-12 h-12 rounded-full"
+              className="w-12 h-12 rounded-full object-cover"
             />
-            <textarea
-              value={newPost}
-              onChange={(e) => setNewPost(e.target.value)}
-              placeholder="Share your knowledge..."
-              className="flex-1 p-3 border rounded-lg resize-none"
-              rows={3}
-            />
+            <div className="flex-1 space-y-4">
+              <textarea
+                value={newPost}
+                onChange={(e) => setNewPost(e.target.value)}
+                placeholder="Share your knowledge..."
+                className="w-full p-4 border rounded-xl resize-none bg-gray-50"
+                rows={3}
+              />
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleCreatePost}
+                className="w-full md:w-auto px-8 py-3 bg-indigo-600 text-white rounded-xl flex items-center gap-2 justify-center"
+              >
+                <FiPlus className="text-lg" />
+                Publish Post
+              </motion.button>
+            </div>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleCreatePost}
-            className="mt-4 px-6 py-2 bg-teal-600 text-white rounded-lg float-right"
-          >
-            Post
-          </motion.button>
         </motion.div>
 
         {/* Posts Feed */}
@@ -325,42 +362,51 @@ const ProfileNexus = () => {
               initial="hidden"
               animate="visible"
               exit={{ opacity: 0 }}
-              className="bg-white rounded-2xl shadow-lg p-6 mb-6"
+              className="bg-white rounded-xl shadow-lg p-6 mb-6"
+              whileHover={{ y: -2 }}
             >
               <div className="flex gap-4 mb-4">
                 <img
                   src={avatarUrl}
                   alt="Profile"
-                  className="w-12 h-12 rounded-full"
+                  className="w-12 h-12 rounded-full object-cover"
                 />
-                <div>
-                  <h4 className="font-bold text-gray-800">{post.author}</h4>
-                  <p className="text-gray-500 text-sm">
-                    {new Date(post.timestamp).toLocaleDateString()}
-                  </p>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-semibold text-gray-900">{post.author}</h4>
+                      <p className="text-sm text-gray-500">
+                        {new Date(post.timestamp).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="mt-3 text-gray-800 whitespace-pre-line">{post.content}</p>
+                  <div className="flex gap-6 mt-4 text-gray-500">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      className="flex items-center gap-2 hover:text-indigo-600"
+                      onClick={() => handleLikePost(post.id)}
+                    >
+                      <FiThumbsUp /> {post.likes}
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      className="flex items-center gap-2 hover:text-indigo-600"
+                    >
+                      <FiMessageSquare /> {post.comments.length}
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      className="flex items-center gap-2 hover:text-indigo-600"
+                    >
+                      <FiShare /> {post.shares}
+                    </motion.button>
+                  </div>
                 </div>
-              </div>
-              <p className="text-gray-800 mb-6">{post.content}</p>
-              <div className="flex gap-6 text-gray-500">
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  className="flex items-center gap-2"
-                  onClick={() => handleLikePost(post.id)}
-                >
-                  <FiThumbsUp /> {post.likes}
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  className="flex items-center gap-2"
-                >
-                  <FiMessageSquare /> {post.comments.length}
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  className="flex items-center gap-2"
-                >
-                  <FiShare /> {post.shares}
-                </motion.button>
               </div>
             </motion.div>
           ))}

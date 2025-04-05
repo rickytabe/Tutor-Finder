@@ -20,6 +20,7 @@ import ErrorBoundary from "./ErrorBound";
 import LearnerDashboard from "./components/Main/learner-pages/Learner_Dashboard/Dashboard";
 import TutorDashboard from "./components/Main/tutor-pages/Dashboard/dashboard";
 import TeachingOverview from "./components/Main/tutor-pages/Dashboard/teachingOverview";
+import TutorProfileNexus from "./components/Main/tutor-pages/Dashboard/tutorProfile";
 
 
 function App() {
@@ -58,7 +59,7 @@ function App() {
               <Route path="teaching" element={<TeachingOverview />} />
               <Route path="sessions" element={<Gigs />} />
               <Route path="financial" element={<FinancialHub />} />
-              <Route path="profile" element={<ProfileNexus />} />
+              <Route path="profile" element={<TutorProfileNexus />} />
             </Route>
             
           </Routes>

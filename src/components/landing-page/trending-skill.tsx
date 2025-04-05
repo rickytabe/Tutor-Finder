@@ -6,15 +6,6 @@ interface Skill {
   level: number;
 }
 
-const getDemandColor = (level: number) => {
-  switch(level) {
-    case 5: return "from-red-500 to-pink-600";
-    case 4: return "from-orange-500 to-yellow-600";
-    case 3: return "from-green-500 to-cyan-600";
-    default: return "from-gray-500 to-blue-600";
-  }
-};
-
 const TrendingSkills = () => {
  const skills: Skill[] = [
   { name: "AI & Machine Learning", demand: "High", level: 4 },
@@ -25,7 +16,7 @@ const TrendingSkills = () => {
   { name: "Cloud Computing", demand: "High", level: 4 },
   { name: "UI/UX Design", demand: "Very High", level: 5 },
   { name: "DevOps", demand: "High", level: 4 },
-  { name: "Blockchain", demand: "Emerging", level: 2 },
+  { name: "Wig Instalation", demand: "Emerging", level: 2 },
   { name: "Game Development", demand: "Stable", level: 3 },
   { name: "AR/VR", demand: "Growing", level: 3 },
   { name: "Quantum Computing", demand: "Emerging", level: 2 },
@@ -40,7 +31,7 @@ const TrendingSkills = () => {
   { name: "Healthcare & Nursing", demand: "Very High", level: 5 },
   { name: "Education & Training", demand: "High", level: 4 },
   { name: "Legal Services", demand: "Stable", level: 3 },
-  { name: "Supply Chain Management", demand: "Growing", level: 3 },
+  { name: "Tailoring", demand: "Stable", level: 3 },
 ];
 
   const duplicatedSkills = useMemo(() => [...skills, ...skills], [skills]);
@@ -67,7 +58,7 @@ const TrendingSkills = () => {
   `;
 
   const SkillCard = ({ skill }: { skill: Skill }) => (
-    <div className={`group relative min-w-[280px] mx-4 bg-gradient-to-r ${getDemandColor(skill.level)} p-0.5 rounded-2xl transition-all hover:scale-105 flex-shrink-0`}>
+    <div className="group relative min-w-[280px] mx-4 bg-gradient-to-r from-blue-500 to-blue-600 p-0.5 rounded-2xl transition-all hover:scale-105 flex-shrink-0">
       <div className="bg-gray-900 rounded-2xl p-6 h-full">
         <div className="flex items-center justify-between mb-4">
           <span className="text-white/90 font-semibold text-lg">
