@@ -4,6 +4,7 @@ const token = localStorage.getItem('token');
 console.log('My Token', token);
 
 export const defaultHeaders = {
+  'Content-Type':'application/json',
   'Accept': 'application/json',
   'Authorization':`Bearer ${token}`,
 };
